@@ -103,3 +103,32 @@ export const itemsRelations = relations(items, ({ one }) => ({
   })
 }));
 
+export const receipts = pgTable('receipts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  workspaceId: uuid('workspace_id').notNull().references(() => workspaces.id),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const receiptsRelations = relations(receipts, ({ one, many }) => ({
+  workspace: one(workspaces, {
+    fields: [receipts.workspaceId],
+    references: [workspaces.id],
+  }),
+  items: many(receiptItems),
+}));
+
+export const receiptItems = pgTable('receipt_items', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  receiptId: uuid('receipt_id').notNull().references(() => receipts.id),
+  name: text('name').notNull(),
+  quantity: text('quantity'),
+  price: numeric('price', {precision: 7, scale: 2}),
+  category: text('category'),
+});
+
+export const receiptItemsRelations = relations(receiptItems, ({ one }) => ({
+  receipt: one(receipts, {
+    fields: [receiptItems.receiptId],
+    references: [receipts.id],
+  })
+}));

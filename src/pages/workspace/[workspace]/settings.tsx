@@ -1,0 +1,1 @@
+// show workspace settings, such as what list is the default list, the name of the workspace, invites, etc.

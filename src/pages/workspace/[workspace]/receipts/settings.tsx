@@ -1,0 +1,1 @@
+// settings for receipts, such as item categories
