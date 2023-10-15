@@ -1,12 +1,21 @@
-import {type AppType} from "next/app";
+"use client";
 
-import {api} from "~/utils/api";
+import { type AppType } from "next/app";
 
+import { api } from "~/utils/api";
+
+import "@mantine/core/styles.css";
 import "~/styles/globals.css";
-import {ClerkProvider} from "@clerk/nextjs";
+import { createTheme, MantineProvider } from "@mantine/core";
 
-const MyApp: AppType = ({Component, pageProps}) => {
-  return <ClerkProvider {...pageProps}><Component {...pageProps} /></ClerkProvider>;
+const theme = createTheme({});
+
+const MyApp: AppType = ({ Component, pageProps }) => {
+  return (
+    <MantineProvider theme={theme} defaultColorScheme={"dark"}>
+      <Component {...pageProps} />
+    </MantineProvider>
+  );
 };
 
 export default api.withTRPC(MyApp);

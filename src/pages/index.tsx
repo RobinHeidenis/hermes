@@ -1,12 +1,9 @@
 import Head from "next/head";
 import Link from "next/link";
 
-import {api} from "~/utils/api";
+import { Card, Text, Title } from "@mantine/core";
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  const secret = api.example.secret.useQuery();
-
   return (
     <>
       <Head>
@@ -43,12 +40,10 @@ export default function Home() {
               </div>
             </Link>
           </div>
-          <p className="text-2xl text-white">
-            {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-          </p>
-          <p className={`text-2xl text-white ${secret.data ? "" : "hidden"}`}>
-            {secret.data}
-          </p>
+          <Card>
+            <Title order={3}>Workspace</Title>
+            <Text>8 items</Text>
+          </Card>
         </div>
       </main>
     </>
