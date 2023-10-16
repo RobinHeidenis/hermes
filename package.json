@@ -12,6 +12,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@auth/core": "^0.16.1",
     "@auth/drizzle-adapter": "^0.3.3",
     "@mantine/core": "^7.1.2",
     "@mantine/dates": "^7.1.2",
