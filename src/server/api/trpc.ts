@@ -13,7 +13,7 @@ import { ZodError } from "zod";
 
 import { db } from "~/server/db";
 import { type Session } from "next-auth";
-import { getServerAuthSession } from "~/server/auth";
+import { auth } from "~/../auth";
 
 /**
  * 1. CONTEXT
@@ -52,9 +52,22 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
+  const response = {
+    ...res,
+    headers: {
+      append: (s: string) => {
+        res.setHeader("set-cookie", s);
+      },
+    },
+  };
 
   // Get the session from the server using the getServerSession wrapper function
-  const session = await getServerAuthSession({ req, res });
+  // We're in some pretty sketchy territory anyway, might as well expect an error.
+  // I'm not sure if this works at all, but so far it looks okay.
+  // The problem is next-auth tries to append cookies from the core response (?) to the nextjs response (?),
+  // but the next response doesn't have the headers property set at all. This causes it to throw an error.
+  // @ts-expect-error By doing this it somehow magically does work
+  const session = await auth(req, response);
   return createInnerTRPCContext({ session });
 };
 

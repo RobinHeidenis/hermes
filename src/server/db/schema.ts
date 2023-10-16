@@ -12,7 +12,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { type AdapterAccount } from "next-auth/adapters";
+import { type AdapterAccount } from "@auth/core/adapters";
 
 export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),

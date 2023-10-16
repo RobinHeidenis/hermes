@@ -4,7 +4,6 @@ import { type AppType } from "next/app";
 
 import { api } from "~/utils/api";
 
-import "@mantine/core/styles.css";
 import "~/styles/globals.css";
 import { createTheme, MantineProvider } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
