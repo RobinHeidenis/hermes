@@ -12,22 +12,20 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import { type AdapterAccount } from "next-auth/adapters";
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
-
-export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  externalId: text("external_id").unique(),
+export const users = pgTable("user", {
+  id: text("id").notNull().primaryKey(),
+  name: text("name"),
+  email: text("email").notNull(),
+  emailVerified: timestamp("emailVerified", { mode: "date" }),
+  image: text("image"),
   defaultWorkspaceId: uuid("default_workspace_id"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({
+  accounts: many(accounts),
   usersToWorkspaces: many(usersToWorkspaces),
   ownedWorkspaces: many(workspaces),
   defaultWorkspace: one(workspaces, {
@@ -36,11 +34,61 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   }),
 }));
 
+export const accounts = pgTable(
+  "account",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").$type<AdapterAccount["type"]>().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  },
+  (account) => ({
+    compoundKey: primaryKey(account.provider, account.providerAccountId),
+  }),
+);
+
+export const accountsRelations = relations(accounts, ({ one }) => ({
+  user: one(users, { fields: [accounts.userId], references: [users.id] }),
+}));
+
+export const sessions = pgTable("session", {
+  sessionToken: text("sessionToken").notNull().primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+});
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
+
+export const verificationTokens = pgTable(
+  "verificationToken",
+  {
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (vt) => ({
+    compoundKey: primaryKey(vt.identifier, vt.token),
+  }),
+);
+
 export const workspaces = pgTable("workspaces", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 50 }).notNull(),
   defaultListId: uuid("default_list_id"),
-  ownerId: uuid("owner_id")
+  ownerId: text("owner_id")
     .notNull()
     .references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
@@ -63,7 +111,7 @@ export const workspacesRelations = relations(workspaces, ({ many, one }) => ({
 export const usersToWorkspaces = pgTable(
   "users_to_workspaces",
   {
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => users.id),
     workspaceId: uuid("workspace_id")
