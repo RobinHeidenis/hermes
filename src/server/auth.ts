@@ -52,6 +52,8 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
+      //@ts-expect-error testing testing
+      redirectProxyUrl: process.env.AUTH_REDIRECT_PROXY_URL,
     }),
     /**
      * ...add more providers here.
