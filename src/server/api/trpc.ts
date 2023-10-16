@@ -13,7 +13,7 @@ import { ZodError } from "zod";
 
 import { db } from "~/server/db";
 import { type Session } from "next-auth";
-import { auth } from "../../../auth";
+import { auth } from "~/../auth";
 
 /**
  * 1. CONTEXT
