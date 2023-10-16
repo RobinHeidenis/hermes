@@ -2,6 +2,7 @@ import { Card, Text, ThemeIcon, Title, useMantineTheme } from "@mantine/core";
 import { ListIcon, StoreIcon, UserIcon } from "lucide-react";
 import { useHover } from "@mantine/hooks";
 import Link from "next/link";
+import type { FC } from "react";
 
 interface WorkspaceCardProps {
   id: string;
@@ -10,12 +11,12 @@ interface WorkspaceCardProps {
   lists: number;
 }
 
-export const WorkspaceCard = ({
+export const WorkspaceCard: FC<WorkspaceCardProps> = ({
   id,
   name,
   users,
   lists,
-}: WorkspaceCardProps) => {
+}) => {
   const { colors } = useMantineTheme();
   const { hovered, ref } = useHover<HTMLAnchorElement>();
 
