@@ -2,10 +2,10 @@
 
 import { CustomAppShell } from "~/components/appshell/CustomAppShell";
 import { Flex, Text, Title } from "@mantine/core";
-import { WorkspaceCard } from "~/components/workspace/WorkspaceCard";
+import { WorkspaceCard } from "~/components/pages/workspace/WorkspaceCard";
 import { ShieldIcon, UsersIcon } from "lucide-react";
 import { api } from "~/utils/api";
-import { SkeletonWorkspaceCard } from "~/components/workspace/SkeletonWorkspaceCard";
+import { SkeletonWorkspaceCard } from "~/components/pages/workspace/SkeletonWorkspaceCard";
 import type { ComponentType, ReactNode } from "react";
 import { useRequireAuth } from "~/hooks/useRequireSignin";
 

@@ -34,7 +34,7 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
           <Title>Hermes</Title>
         </div>
         {data?.user && (
-          <Menu>
+          <Menu zIndex={400}>
             <Menu.Target>
               <UnstyledButton
                 className={`mr-5 flex items-center rounded-md p-2 hover:bg-[--mantine-color-default-hover]`}
