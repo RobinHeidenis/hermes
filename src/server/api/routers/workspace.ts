@@ -1,6 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { eq } from "drizzle-orm";
 import { usersToWorkspaces, workspaces } from "~/server/db/schema";
+import { createWorkspaceSchema } from "~/schemas/createWorkspace";
 
 export const workspaceRouter = createTRPCRouter({
   getWorkspaces: protectedProcedure.query(async ({ ctx }) => {
@@ -59,4 +60,15 @@ export const workspaceRouter = createTRPCRouter({
       collaboratingWorkspaces,
     };
   }),
+  create: protectedProcedure
+    .input(createWorkspaceSchema)
+    .mutation(async ({ ctx, input }) => {
+      const p = await ctx.db
+        .insert(workspaces)
+        .values({ name: input.name, ownerId: ctx.session.user.id })
+        .returning({ id: workspaces.id })
+        .execute();
+
+      return p[0]?.id;
+    }),
 });
