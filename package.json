@@ -2,6 +2,7 @@
   "name": "shoppinglist",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "next build",
     "db:push": "dotenv drizzle-kit push:pg",

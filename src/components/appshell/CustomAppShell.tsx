@@ -16,10 +16,13 @@ import {
   UserIcon,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { NextNavLink } from "~/components/navigation/NextNavLink";
+import { useRouter } from "next/router";
 
 export const CustomAppShell = ({ children }: PropsWithChildren) => {
   const { data } = useSession();
   const { white } = useMantineTheme();
+  const { pathname } = useRouter();
 
   return (
     <AppShell header={{ height: 60 }} padding="md">
@@ -34,7 +37,7 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
           <Title>Hermes</Title>
         </div>
         {data?.user && (
-          <Menu>
+          <Menu zIndex={400}>
             <Menu.Target>
               <UnstyledButton
                 className={`mr-5 flex items-center rounded-md p-2 hover:bg-[--mantine-color-default-hover]`}
@@ -54,17 +57,25 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
               </Menu.Label>
               <Menu.Divider />
               <Menu.Item
-                leftSection={<UserIcon className={"h-4 w-4"} />}
-                disabled
-              >
-                Profile
-              </Menu.Item>
+                renderRoot={() => (
+                  <NextNavLink
+                    href={"/me"}
+                    label={"Profile"}
+                    leftSection={<UserIcon className={"h-4 w-4"} />}
+                    pathname={pathname}
+                  />
+                )}
+              />
               <Menu.Item
-                leftSection={<LayoutDashboardIcon className={"h-4 w-4"} />}
-                disabled
-              >
-                Workspaces
-              </Menu.Item>
+                renderRoot={() => (
+                  <NextNavLink
+                    href={"/workspace"}
+                    label={"Workspaces"}
+                    leftSection={<LayoutDashboardIcon className={"h-4 w-4"} />}
+                    pathname={pathname}
+                  />
+                )}
+              />
               <Menu.Item
                 leftSection={<SettingsIcon className={"h-4 w-4"} />}
                 disabled
