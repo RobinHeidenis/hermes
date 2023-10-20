@@ -22,6 +22,7 @@ export const UserForm = ({ image }: { image: string | null | undefined }) => {
         src={image ?? ""}
         alt={"profile picture"}
         className={"h-32 w-32 self-center"}
+        radius={"md"}
       />
       <TextInput
         label="Username"

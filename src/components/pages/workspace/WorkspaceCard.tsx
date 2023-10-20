@@ -54,7 +54,7 @@ export const WorkspaceCard: FC<WorkspaceCardProps> = ({
         <div className={"flex items-center"}>
           <UserIcon className={"mr-1 h-5 w-5"} />
           <Text>
-            {users} {getPluralOrSingular(users, "user")}
+            {users + 1} {getPluralOrSingular(users + 1, "user")}
           </Text>
         </div>
         <Text className={"ml-2 mr-2"} span>
@@ -72,5 +72,5 @@ export const WorkspaceCard: FC<WorkspaceCardProps> = ({
 };
 
 const getPluralOrSingular = (amount: number, singular: string) => {
-  return amount > 1 ? singular + "s" : singular;
+  return amount > 1 || amount === 0 ? singular + "s" : singular;
 };
