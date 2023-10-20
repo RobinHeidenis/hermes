@@ -5,6 +5,7 @@ import { modals } from "@mantine/modals";
 import { api } from "~/utils/api";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const CreateWorkspaceModal = () => {
   const form = useForm({
@@ -15,6 +16,10 @@ const CreateWorkspaceModal = () => {
   });
   const { mutateAsync, isLoading } = api.workspace.create.useMutation();
   const router = useRouter();
+
+  useEffect(() => {
+    window.history.pushState({}, "", "/workspace/new");
+  }, []);
 
   return (
     <form
@@ -56,5 +61,8 @@ export const openCreateWorkspaceModal = () => {
   modals.open({
     title: "Create a new workspace",
     children: <CreateWorkspaceModal />,
+    onClose() {
+      window.history.pushState({}, "", "/workspace");
+    },
   });
 };
