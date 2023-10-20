@@ -8,6 +8,7 @@ import "~/styles/globals.css";
 import { createTheme, MantineProvider } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
 import { type Session } from "next-auth";
+import { ModalsProvider } from "@mantine/modals";
 
 const theme = createTheme({
   breakpoints: {
@@ -27,7 +28,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <MantineProvider theme={theme} defaultColorScheme={"dark"}>
-        <Component {...pageProps} />
+        <ModalsProvider>
+          <Component {...pageProps} />
+        </ModalsProvider>
       </MantineProvider>
     </SessionProvider>
   );

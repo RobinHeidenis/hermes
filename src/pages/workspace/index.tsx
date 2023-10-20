@@ -1,13 +1,14 @@
 // page that shows all workspaces
 
 import { CustomAppShell } from "~/components/appshell/CustomAppShell";
-import { Flex, Text, Title } from "@mantine/core";
+import { Button, Flex, Text, Title } from "@mantine/core";
 import { WorkspaceCard } from "~/components/pages/workspace/WorkspaceCard";
-import { ShieldIcon, UsersIcon } from "lucide-react";
+import { PlusIcon, ShieldIcon, UsersIcon } from "lucide-react";
 import { api } from "~/utils/api";
 import { SkeletonWorkspaceCard } from "~/components/pages/workspace/SkeletonWorkspaceCard";
 import type { ComponentType, ReactNode } from "react";
 import { useRequireAuth } from "~/hooks/useRequireSignin";
+import { openCreateWorkspaceModal } from "~/components/modals/CreateWorkspaceModal";
 
 export const WorkspaceIndex = () => {
   useRequireAuth();
@@ -15,7 +16,16 @@ export const WorkspaceIndex = () => {
   const { data, isLoading } = api.workspace.getWorkspaces.useQuery();
   return (
     <CustomAppShell>
-      <Title>Workspace Index</Title>
+      <div className={"flex items-center justify-between"}>
+        <Title>Workspace Index</Title>
+        <Button
+          variant={"light"}
+          leftSection={<PlusIcon className={"h-5 w-5"} />}
+          onClick={openCreateWorkspaceModal}
+        >
+          New workspace
+        </Button>
+      </div>
       <div className={"mt-10 flex items-center"}>
         <ShieldIcon className={"mr-2"} />
         <Title order={2}>My workspaces</Title>
