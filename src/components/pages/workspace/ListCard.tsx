@@ -1,33 +1,28 @@
-import { Card, Text, ThemeIcon, Title, useMantineTheme } from "@mantine/core";
-import { ListIcon, StoreIcon, UserIcon } from "lucide-react";
-import { useHover } from "@mantine/hooks";
 import Link from "next/link";
+import { Card, Text, ThemeIcon, Title, useMantineTheme } from "@mantine/core";
+import { ListTodoIcon, StretchHorizontalIcon } from "lucide-react";
+import { useHover } from "@mantine/hooks";
+import { getPluralOrSingular } from "./WorkspaceCard";
 import type { FC } from "react";
 
-interface WorkspaceCardProps {
+interface ListCardProps {
   id: string;
-  name: string;
-  users: number;
-  lists: number;
+  name: string | null;
+  items: { id: string }[];
 }
 
-export const WorkspaceCard: FC<WorkspaceCardProps> = ({
-  id,
-  name,
-  users,
-  lists,
-}) => {
+export const ListCard: FC<ListCardProps> = ({ id, name, items }) => {
   const { colors } = useMantineTheme();
   const { hovered, ref } = useHover<HTMLAnchorElement>();
 
   return (
     <Card
-      ref={ref}
       maw={"20rem"}
       miw={"20rem"}
       mah={"10rem"}
       mih={"10rem"}
-      className={`flex transform flex-col justify-between shadow-sm transition hover:scale-105 hover:shadow-md`}
+      ref={ref}
+      className={`flex flex-col justify-between shadow-sm transition hover:scale-105 hover:transform hover:shadow-md`}
       withBorder
       radius="md"
       bg={hovered ? "dark.5" : ""}
@@ -36,7 +31,7 @@ export const WorkspaceCard: FC<WorkspaceCardProps> = ({
     >
       <div className={"flex h-auto items-start justify-start"}>
         <ThemeIcon className={`mr-4 p-3`} size={"xl"} color={colors.dark[7]}>
-          <StoreIcon size={30} />
+          <ListTodoIcon size={30} />
         </ThemeIcon>
         <div>
           <Title
@@ -49,25 +44,12 @@ export const WorkspaceCard: FC<WorkspaceCardProps> = ({
       </div>
       <div className={"flex"}>
         <div className={"flex items-center"}>
-          <UserIcon className={"mr-1 h-5 w-5"} />
+          <StretchHorizontalIcon className={"mr-1 h-5 w-5"} />
           <Text>
-            {users + 1} {getPluralOrSingular(users + 1, "user")}
-          </Text>
-        </div>
-        <Text className={"ml-2 mr-2"} span>
-          •
-        </Text>
-        <div className={"flex items-center"}>
-          <ListIcon className={"mr-1 h-5 w-5"} />
-          <Text>
-            {lists} {getPluralOrSingular(lists, "list")}
+            {items.length} {getPluralOrSingular(items.length, "item")}
           </Text>
         </div>
       </div>
     </Card>
   );
-};
-
-export const getPluralOrSingular = (amount: number, singular: string) => {
-  return amount > 1 || amount === 0 ? singular + "s" : singular;
 };
