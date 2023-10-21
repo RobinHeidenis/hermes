@@ -18,9 +18,10 @@ import { useHover } from "@mantine/hooks";
 
 export const WorkspaceDetailPage = () => {
   const { query } = useRouter();
-  const { data: workspace, isLoading } = api.workspace.getWorkspace.useQuery({
-    workspaceId: query.workspace as string,
-  });
+  const { data: workspace, isLoading } = api.workspace.getWorkspace.useQuery(
+    { workspaceId: query.workspace as string },
+    { enabled: !!query.workspace },
+  );
   const { hovered, ref } = useHover();
 
   return (
