@@ -66,7 +66,7 @@ interface ArrayDataDisplayProps<T extends Array<{ id: string }>, R> {
   array: T | undefined | null;
   DisplayElement: ComponentType<T[number]>;
 }
-const ArrayDataDisplay = <T extends Array<{ id: string }>, R>({
+export const ArrayDataDisplay = <T extends Array<{ id: string }>, R>({
   skeleton,
   noItems,
   data,
@@ -81,7 +81,7 @@ const ArrayDataDisplay = <T extends Array<{ id: string }>, R>({
 
 export default WorkspaceIndex;
 
-const WorkspaceSkeletons = () => (
+export const WorkspaceSkeletons = () => (
   <>
     <SkeletonWorkspaceCard />
     <SkeletonWorkspaceCard />

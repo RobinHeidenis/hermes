@@ -5,7 +5,7 @@ import type { Session } from "next-auth";
 
 export const UserCardPreview = ({ user }: { user: Session["user"] }) => {
   const {
-    values: { name, email },
+    values: { name },
   } = useUserFormContext();
 
   return (
@@ -20,7 +20,6 @@ export const UserCardPreview = ({ user }: { user: Session["user"] }) => {
           <Popover.Dropdown>
             <UserCard
               name={name.length > 0 ? name : user.name}
-              email={email.length > 0 ? email : user.email}
               image={user.image}
             />
           </Popover.Dropdown>
