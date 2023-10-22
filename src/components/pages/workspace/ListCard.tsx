@@ -4,6 +4,7 @@ import { ListTodoIcon, StretchHorizontalIcon } from "lucide-react";
 import { useHover } from "@mantine/hooks";
 import { getPluralOrSingular } from "./WorkspaceCard";
 import type { FC } from "react";
+import { useRouter } from "next/router";
 
 interface ListCardProps {
   id: string;
@@ -14,6 +15,7 @@ interface ListCardProps {
 export const ListCard: FC<ListCardProps> = ({ id, name, items }) => {
   const { colors } = useMantineTheme();
   const { hovered, ref } = useHover<HTMLAnchorElement>();
+  const { asPath } = useRouter();
 
   return (
     <Card
@@ -27,7 +29,7 @@ export const ListCard: FC<ListCardProps> = ({ id, name, items }) => {
       radius="md"
       bg={hovered ? "dark.5" : ""}
       component={Link}
-      href={`/workspace/${id}`}
+      href={`${asPath}/list/${id}`}
     >
       <div className={"flex h-auto items-start justify-start"}>
         <ThemeIcon className={`mr-4 p-3`} size={"xl"} color={colors.dark[7]}>

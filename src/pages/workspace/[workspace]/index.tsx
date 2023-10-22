@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import {
   Avatar,
   AvatarGroup,
+  Button,
   Card,
   Flex,
   LoadingOverlay,
@@ -15,6 +16,8 @@ import { UserAvatar } from "~/components/pages/workspace/UserAvatar";
 import { ArrayDataDisplay, WorkspaceSkeletons } from "~/pages/workspace";
 import { ListCard } from "~/components/pages/workspace/ListCard";
 import { useHover } from "@mantine/hooks";
+import { PlusIcon } from "lucide-react";
+import { openCreateListModal } from "~/components/modals/CreateListModal";
 
 export const WorkspaceDetailPage = () => {
   const { query } = useRouter();
@@ -30,8 +33,20 @@ export const WorkspaceDetailPage = () => {
         <LoadingOverlay visible />
       ) : (
         <>
-          <Text c={"dimmed"}>Workspace</Text>
-          <Title>{workspace.name}</Title>
+          <div className={"flex items-center justify-between"}>
+            <div>
+              <Text c={"dimmed"}>Workspace</Text>
+              <Title>{workspace.name}</Title>
+            </div>
+            <Button
+              variant={"light"}
+              className={"self-start"}
+              leftSection={<PlusIcon className={"h-5 w-5"} />}
+              onClick={() => openCreateListModal({ workspaceId: workspace.id })}
+            >
+              New list
+            </Button>
+          </div>
           <div className={"mt-3 flex"}>
             <Card className={"flex flex-row justify-center"}>
               <Text className={"mr-2"}>Owned by:</Text>

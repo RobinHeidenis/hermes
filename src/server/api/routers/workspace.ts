@@ -79,6 +79,7 @@ export const workspaceRouter = createTRPCRouter({
       const workspace = await ctx.db.query.workspaces.findFirst({
         where: eq(workspaces.id, input.workspaceId),
         columns: {
+          id: true,
           name: true,
         },
         with: {
@@ -125,6 +126,7 @@ export const workspaceRouter = createTRPCRouter({
         });
 
       return {
+        id: workspace.id,
         name: workspace.name,
         users: {
           owner: workspace.owner,
