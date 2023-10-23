@@ -20,6 +20,7 @@ export const WorkspaceIndex = () => {
         <Title>Workspace Index</Title>
         <Button
           variant={"light"}
+          className={"self-start"}
           leftSection={<PlusIcon className={"h-5 w-5"} />}
           onClick={openCreateWorkspaceModal}
         >

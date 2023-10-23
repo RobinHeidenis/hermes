@@ -16,7 +16,7 @@ import { UserAvatar } from "~/components/pages/workspace/UserAvatar";
 import { ArrayDataDisplay, WorkspaceSkeletons } from "~/pages/workspace";
 import { ListCard } from "~/components/pages/workspace/ListCard";
 import { useHover } from "@mantine/hooks";
-import { PlusIcon } from "lucide-react";
+import { BarChart3Icon, ListTodoIcon, PlusIcon } from "lucide-react";
 import { openCreateListModal } from "~/components/modals/CreateListModal";
 
 export const WorkspaceDetailPage = () => {
@@ -110,9 +110,10 @@ export const WorkspaceDetailPage = () => {
               </AvatarGroup>
             </Card>
           </div>
-          <Title order={2} className={"mt-3"}>
-            Lists
-          </Title>
+          <div className={"mt-3 flex items-center"}>
+            <ListTodoIcon className={"mr-2"} />
+            <Title order={2}>Lists</Title>
+          </div>
           <Flex gap={30} className={"mt-5 flex-wrap"}>
             <ArrayDataDisplay
               skeleton={<WorkspaceSkeletons />}
@@ -123,9 +124,10 @@ export const WorkspaceDetailPage = () => {
               DisplayElement={ListCard}
             />
           </Flex>
-          <Title order={2} className={"mt-3"}>
-            Expense report
-          </Title>
+          <div className={"mt-3 flex items-center"}>
+            <BarChart3Icon className={"mr-2"} />
+            <Title order={2}>Expense report</Title>
+          </div>
           <Text className={"mt-2"}>This feature is coming soon</Text>
         </>
       )}
