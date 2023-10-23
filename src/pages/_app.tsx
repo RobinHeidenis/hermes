@@ -9,6 +9,7 @@ import { createTheme, MantineProvider } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
 import { type Session } from "next-auth";
 import { ModalsProvider } from "@mantine/modals";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const theme = createTheme({
   breakpoints: {
@@ -30,6 +31,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <MantineProvider theme={theme} defaultColorScheme={"dark"}>
         <ModalsProvider>
           <Component {...pageProps} />
+          <ReactQueryDevtools initialIsOpen={false} />
         </ModalsProvider>
       </MantineProvider>
     </SessionProvider>

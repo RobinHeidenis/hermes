@@ -1,10 +1,44 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { createListSchema } from "~/schemas/createListSchema";
-import { eq } from "drizzle-orm";
-import { lists, workspaces } from "~/server/db/schema";
+import { asc, eq } from "drizzle-orm";
+import { items, lists, workspaces } from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
+import { getListSchema } from "~/schemas/getList";
 
 export const listRouter = createTRPCRouter({
+  getList: protectedProcedure
+    .input(getListSchema)
+    .query(async ({ ctx, input }) => {
+      const list = await ctx.db.query.lists.findFirst({
+        where: eq(lists.id, input.listId),
+        columns: {
+          id: true,
+          name: true,
+        },
+        with: {
+          items: {
+            columns: {
+              id: true,
+              name: true,
+              price: true,
+              quantity: true,
+              checked: true,
+              externalUrl: true,
+              position: true,
+            },
+            orderBy: [asc(items.position)],
+          },
+        },
+      });
+
+      if (!list)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "List not found",
+        });
+
+      return list;
+    }),
   create: protectedProcedure
     .input(createListSchema)
     .mutation(async ({ ctx, input }) => {

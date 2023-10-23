@@ -2,6 +2,7 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import {
+  boolean,
   integer,
   numeric,
   pgTable,
@@ -162,6 +163,7 @@ export const items = pgTable("items", {
   price: numeric("price", { precision: 7, scale: 2 }),
   externalUrl: text("external_url"),
   position: integer("position").notNull(),
+  checked: boolean("checked").default(false),
   listId: uuid("list_id")
     .notNull()
     .references(() => lists.id),
