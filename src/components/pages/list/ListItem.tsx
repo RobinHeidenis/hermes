@@ -30,16 +30,34 @@ export const ListItem = ({
   listId,
 }: ListItemProps) => {
   const utils = api.useContext();
-  const { mutate } = api.item.setItemChecked.useMutation({
-    onSuccess: (item) => {
-      if (!item) return;
+  const { mutate: setItemChecked, isLoading: isSetItemCheckedLoading } =
+    api.item.setItemChecked.useMutation({
+      onMutate: async (checkedItem) => {
+        await utils.list.getList.cancel({ listId });
+        const previousList = utils.list.getList.getData({ listId });
+        utils.list.getList.setData({ listId }, (data) => {
+          if (!data) return data;
+          const updatedItems = data.items.map((i) =>
+            i.id === checkedItem.itemId
+              ? { ...i, checked: checkedItem.checked }
+              : i,
+          );
+          return { ...data, items: updatedItems };
+        });
 
+        return { previousList, checkedItem };
+      },
+      onError: (_error, _list, context) => {
+        utils.list.getList.setData({ listId }, context?.previousList);
+      },
+      onSettled: () => utils.list.getList.invalidate({ listId }),
+    });
+  const { mutate: deleteItem } = api.item.deleteItem.useMutation({
+    onSuccess: () => {
       utils.list.getList.setData({ listId }, (data) => {
         if (!data) return data;
 
-        const updatedItems = data.items.map((i) =>
-          i.id === item.id ? { ...i, checked: item.checked } : i,
-        );
+        const updatedItems = data.items.filter((i) => i.id !== itemId);
 
         return { ...data, items: updatedItems };
       });
@@ -55,11 +73,12 @@ export const ListItem = ({
       maxSwipe={1}
       threshold={0.2}
       className={"mb-2"}
+      blockSwipe={isSetItemCheckedLoading}
       leadingActions={
         <LeadingActions>
           <SwipeAction
             onClick={() => {
-              mutate({ itemId, listId, checked: !checked });
+              setItemChecked({ itemId, listId, checked: !checked });
             }}
           >
             <div
@@ -80,11 +99,13 @@ export const ListItem = ({
           <SwipeAction
             destructive
             onClick={() => {
-              console.log("swiped right");
+              deleteItem({ itemId, listId });
             }}
           >
             <div
-              className={"flex h-full flex-col !justify-center bg-red-700 pl-5"}
+              className={
+                "flex h-full flex-col items-end !justify-center bg-red-700 pr-5"
+              }
             >
               <div className={"flex w-fit flex-col items-center"}>
                 <TrashIcon />
