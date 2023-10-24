@@ -6,7 +6,7 @@ import {
   TrailingActions,
 } from "react-swipeable-list";
 import { CheckIcon, LinkIcon, TrashIcon, UndoIcon } from "lucide-react";
-import { ActionIcon, Card, Text } from "@mantine/core";
+import { ActionIcon, Card, Loader, Text } from "@mantine/core";
 
 interface ListItemProps {
   itemId: string;
@@ -30,28 +30,27 @@ export const ListItem = ({
   listId,
 }: ListItemProps) => {
   const utils = api.useContext();
-  const { mutate: setItemChecked, isLoading: isSetItemCheckedLoading } =
-    api.item.setItemChecked.useMutation({
-      onMutate: async (checkedItem) => {
-        await utils.list.getList.cancel({ listId });
-        const previousList = utils.list.getList.getData({ listId });
-        utils.list.getList.setData({ listId }, (data) => {
-          if (!data) return data;
-          const updatedItems = data.items.map((i) =>
-            i.id === checkedItem.itemId
-              ? { ...i, checked: checkedItem.checked }
-              : i,
-          );
-          return { ...data, items: updatedItems };
-        });
+  const { mutate: setItemChecked } = api.item.setItemChecked.useMutation({
+    onMutate: async (checkedItem) => {
+      await utils.list.getList.cancel({ listId });
+      const previousList = utils.list.getList.getData({ listId });
+      utils.list.getList.setData({ listId }, (data) => {
+        if (!data) return data;
+        const updatedItems = data.items.map((i) =>
+          i.id === checkedItem.itemId
+            ? { ...i, checked: checkedItem.checked }
+            : i,
+        );
+        return { ...data, items: updatedItems };
+      });
 
-        return { previousList, checkedItem };
-      },
-      onError: (_error, _list, context) => {
-        utils.list.getList.setData({ listId }, context?.previousList);
-      },
-      onSettled: () => utils.list.getList.invalidate({ listId }),
-    });
+      return { previousList, checkedItem };
+    },
+    onError: (_error, _list, context) => {
+      utils.list.getList.setData({ listId }, context?.previousList);
+    },
+    onSettled: () => utils.list.getList.invalidate({ listId }),
+  });
   const { mutate: deleteItem } = api.item.deleteItem.useMutation({
     onSuccess: () => {
       utils.list.getList.setData({ listId }, (data) => {
@@ -67,13 +66,14 @@ export const ListItem = ({
     currency: "EUR",
     style: "currency",
   });
+  const isTempItem = itemId === "temp";
 
   return (
     <SwipeableListItem
       maxSwipe={1}
       threshold={0.2}
       className={"mb-2"}
-      blockSwipe={isSetItemCheckedLoading}
+      blockSwipe={isTempItem}
       leadingActions={
         <LeadingActions>
           <SwipeAction
@@ -118,12 +118,14 @@ export const ListItem = ({
     >
       <Card
         className={"flex w-full flex-row justify-between"}
-        bg={checked ? "dark.8" : "dark.6"}
+        bg={isTempItem ? "dark.4" : checked ? "dark.8" : "dark.6"}
       >
         <div className={"flex flex-row items-center"}>
-          {showLinkSpace && (
+          {(isTempItem || showLinkSpace) && (
             <>
-              {externalUrl ? (
+              {isTempItem ? (
+                <Loader color={"white"} size={"xs"} className={"mr-5"} />
+              ) : externalUrl ? (
                 <a href={externalUrl} target={"_blank"}>
                   <ActionIcon
                     variant={"transparent"}
@@ -145,7 +147,7 @@ export const ListItem = ({
         </div>
         {price && (
           <div className={"flex items-center"}>
-            <Text fw={500}>{formatter.format(parseInt(price))}</Text>
+            <Text fw={500}>{formatter.format(parseFloat(price))}</Text>
           </div>
         )}
       </Card>
