@@ -27,7 +27,7 @@ export const WorkspaceCard: FC<WorkspaceCardProps> = ({
       miw={"20rem"}
       mah={"10rem"}
       mih={"10rem"}
-      className={`flex transform flex-col justify-between shadow-sm transition hover:scale-105 hover:shadow-md`}
+      className={`mantine-focus-auto flex transform flex-col justify-between shadow-sm transition hover:scale-105 hover:shadow-md focus:scale-105`}
       withBorder
       radius="md"
       bg={hovered ? "dark.5" : ""}

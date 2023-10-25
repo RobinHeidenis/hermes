@@ -7,8 +7,10 @@ import { PlusIcon } from "lucide-react";
 import { openCreateListItemModal } from "~/components/modals/CreateListItemModal";
 import { ListPageContent } from "~/components/pages/list/ListPageContent";
 import { useState } from "react";
+import { useRequireAuth } from "~/hooks/useRequireSignin";
 
 export const ListPage = () => {
+  useRequireAuth();
   const { query } = useRouter();
   const [isReordering, setIsReordering] = useState(false);
   const { data: list, isLoading } = api.list.getList.useQuery(

@@ -24,12 +24,13 @@ export const ListCard: FC<ListCardProps> = ({ id, name, items }) => {
       mah={"10rem"}
       mih={"10rem"}
       ref={ref}
-      className={`flex flex-col justify-between shadow-sm transition hover:scale-105 hover:transform hover:shadow-md`}
+      className={`mantine-focus-auto flex transform flex-col justify-between shadow-sm transition hover:scale-105 hover:shadow-md focus:scale-105`}
       withBorder
       radius="md"
       bg={hovered ? "dark.5" : ""}
       component={Link}
       href={`${asPath}/list/${id}`}
+      tabIndex={0}
     >
       <div className={"flex h-auto items-start justify-start"}>
         <ThemeIcon className={`mr-4 p-3`} size={"xl"} color={colors.dark[7]}>

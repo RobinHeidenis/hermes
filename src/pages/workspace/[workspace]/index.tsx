@@ -18,8 +18,10 @@ import { ListCard } from "~/components/pages/workspace/ListCard";
 import { useHover } from "@mantine/hooks";
 import { BarChart3Icon, ListTodoIcon, PlusIcon } from "lucide-react";
 import { openCreateListModal } from "~/components/modals/CreateListModal";
+import { useRequireAuth } from "~/hooks/useRequireSignin";
 
 export const WorkspaceDetailPage = () => {
+  useRequireAuth();
   const { query } = useRouter();
   const { data: workspace, isLoading } = api.workspace.getWorkspace.useQuery(
     { workspaceId: query.workspace as string },

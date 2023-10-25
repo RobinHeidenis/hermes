@@ -26,11 +26,13 @@ export const SortableList = ({
   listId,
   updateAmount,
   setUpdateAmount,
+  forceUpdate,
 }: {
   items: RouterOutputs["list"]["getList"]["items"];
   listId: string;
   updateAmount: number;
   setUpdateAmount: (updateAmount: number) => void;
+  forceUpdate: () => void;
 }) => {
   const showLinkSpace = items.some((i) => i.externalUrl) ?? false;
   const sensors = useSensors(
@@ -75,6 +77,7 @@ export const SortableList = ({
               item={item}
               showLinkSpace={showLinkSpace}
               listId={listId}
+              forceUpdate={forceUpdate}
             />
           );
         })}
