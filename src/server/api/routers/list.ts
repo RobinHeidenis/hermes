@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { createListSchema } from "~/schemas/createListSchema";
+import { createListSchema } from "~/schemas/createList";
+import { updatePositionsSchema } from "~/schemas/updatePositions";
 import { asc, eq } from "drizzle-orm";
 import { items, lists, workspaces } from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
@@ -83,5 +84,14 @@ export const listRouter = createTRPCRouter({
         .returning({ id: lists.id })
         .execute()
         .then((p) => p[0]?.id);
+    }),
+  updatePositions: protectedProcedure
+    .input(updatePositionsSchema)
+    .mutation(({ ctx, input }) => {
+      const itemUpdatePromises = input.items.map(({ id, position }) => {
+        return ctx.db.update(items).set({ position }).where(eq(items.id, id));
+      });
+
+      return Promise.all(itemUpdatePromises);
     }),
 });

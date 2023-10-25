@@ -1,3 +1,4 @@
+import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import {
   LeadingActions,
@@ -5,30 +6,39 @@ import {
   SwipeAction,
   TrailingActions,
 } from "react-swipeable-list";
-import { CheckIcon, LinkIcon, TrashIcon, UndoIcon } from "lucide-react";
+import {
+  CheckIcon,
+  GripVerticalIcon,
+  LinkIcon,
+  TrashIcon,
+  UndoIcon,
+} from "lucide-react";
 import { ActionIcon, Card, Loader, Text } from "@mantine/core";
+import type { DraggableAttributes } from "@dnd-kit/core";
+import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
-interface ListItemProps {
-  itemId: string;
-  name: string;
-  price: string | null;
-  quantity: string | null;
-  checked: boolean;
-  externalUrl: string | null;
+type ListItem = RouterOutputs["list"]["getList"]["items"][number];
+
+export interface ListItemProps {
+  item: ListItem;
   showLinkSpace?: boolean;
   listId: string;
+  attributes?: DraggableAttributes;
+  listeners?: SyntheticListenerMap | undefined;
+  sortable?: boolean;
+  disableSwipe?: boolean;
 }
 
 export const ListItem = ({
-  itemId,
-  name,
-  price,
-  quantity,
-  checked,
-  externalUrl,
+  item,
   showLinkSpace,
   listId,
+  attributes,
+  listeners,
+  sortable,
+  disableSwipe,
 }: ListItemProps) => {
+  const { id: itemId, name, price, quantity, checked, externalUrl } = item;
   const utils = api.useContext();
   const { mutate: setItemChecked } = api.item.setItemChecked.useMutation({
     onMutate: async (checkedItem) => {
@@ -67,13 +77,14 @@ export const ListItem = ({
     style: "currency",
   });
   const isTempItem = itemId === "temp";
+  const itemChecked = checked && !sortable;
 
   return (
     <SwipeableListItem
       maxSwipe={1}
       threshold={0.2}
       className={"mb-2"}
-      blockSwipe={isTempItem}
+      blockSwipe={isTempItem || disableSwipe}
       leadingActions={
         <LeadingActions>
           <SwipeAction
@@ -83,12 +94,12 @@ export const ListItem = ({
           >
             <div
               className={`flex h-full flex-col !justify-center ${
-                checked ? "bg-yellow-700" : "bg-green-800"
+                itemChecked ? "bg-yellow-700" : "bg-green-800"
               } pl-5`}
             >
               <div className={"flex w-fit flex-col items-center"}>
-                {checked ? <UndoIcon /> : <CheckIcon />}
-                {checked ? "Undo" : "Check"}
+                {itemChecked ? <UndoIcon /> : <CheckIcon />}
+                {itemChecked ? "Undo" : "Check"}
               </div>
             </div>
           </SwipeAction>
@@ -118,7 +129,7 @@ export const ListItem = ({
     >
       <Card
         className={"flex w-full flex-row justify-between"}
-        bg={isTempItem ? "dark.4" : checked ? "dark.8" : "dark.6"}
+        bg={isTempItem ? "dark.4" : itemChecked ? "dark.8" : "dark.6"}
       >
         <div className={"flex flex-row items-center"}>
           {(isTempItem || showLinkSpace) && (
@@ -141,15 +152,22 @@ export const ListItem = ({
             </>
           )}
           <div className={"flex flex-col"}>
-            <Text td={checked ? "line-through" : ""}>{name}</Text>
+            <Text td={itemChecked ? "line-through" : ""}>{name}</Text>
             <Text c={"dimmed"}>{quantity}</Text>
           </div>
         </div>
-        {price && (
-          <div className={"flex items-center"}>
+        <div className={"flex items-center"}>
+          {price !== null && (
             <Text fw={500}>{formatter.format(parseFloat(price))}</Text>
-          </div>
-        )}
+          )}
+          {sortable && (
+            <GripVerticalIcon
+              className={"ml-5 cursor-move"}
+              {...attributes}
+              {...listeners}
+            />
+          )}
+        </div>
       </Card>
     </SwipeableListItem>
   );

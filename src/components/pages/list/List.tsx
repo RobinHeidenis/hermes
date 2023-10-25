@@ -18,44 +18,30 @@ export const List = ({
   const uncheckedItems = items.filter((i) => !i.checked);
 
   return (
-    <SwipeableList threshold={0.2} className={"mt-4"}>
+    <SwipeableList threshold={0.2}>
       <div ref={ref}>
-        {uncheckedItems.map(
-          ({ id, name, price, quantity, checked, externalUrl }) => (
-            <ListItem
-              itemId={id}
-              key={id}
-              name={name}
-              price={price}
-              quantity={quantity}
-              checked={checked ?? false}
-              externalUrl={externalUrl}
-              showLinkSpace={showLinkSpace}
-              listId={listId}
-            />
-          ),
-        )}
+        {uncheckedItems.map((item) => (
+          <ListItem
+            key={item.id}
+            item={item}
+            showLinkSpace={showLinkSpace}
+            listId={listId}
+          />
+        ))}
         {checkedItems.length > 0 && (
           <div className={"flex items-center py-2"}>
             <CheckIcon className={"mr-1"} />
             <Title order={4}>Checked items</Title>
           </div>
         )}
-        {checkedItems.map(
-          ({ id, name, price, quantity, checked, externalUrl }) => (
-            <ListItem
-              itemId={id}
-              key={id}
-              name={name}
-              price={price}
-              quantity={quantity}
-              checked={checked ?? false}
-              externalUrl={externalUrl}
-              showLinkSpace={showLinkSpace}
-              listId={listId}
-            />
-          ),
-        )}
+        {checkedItems.map((item) => (
+          <ListItem
+            key={item.id}
+            item={item}
+            showLinkSpace={showLinkSpace}
+            listId={listId}
+          />
+        ))}
       </div>
     </SwipeableList>
   );
