@@ -10,12 +10,14 @@ import {
   CheckIcon,
   GripVerticalIcon,
   LinkIcon,
+  PencilIcon,
   TrashIcon,
   UndoIcon,
 } from "lucide-react";
 import { ActionIcon, Card, Loader, Text } from "@mantine/core";
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { openEditItemModal } from "~/components/modals/EditItemModal";
 
 type ListItem = RouterOutputs["list"]["getList"]["items"][number];
 
@@ -23,6 +25,7 @@ export interface ListItemProps {
   item: ListItem;
   showLinkSpace?: boolean;
   listId: string;
+  forceUpdate: () => void;
   attributes?: DraggableAttributes;
   listeners?: SyntheticListenerMap | undefined;
   sortable?: boolean;
@@ -33,6 +36,7 @@ export const ListItem = ({
   item,
   showLinkSpace,
   listId,
+  forceUpdate,
   attributes,
   listeners,
   sortable,
@@ -137,7 +141,7 @@ export const ListItem = ({
               {isTempItem ? (
                 <Loader color={"white"} size={"xs"} className={"mr-5"} />
               ) : externalUrl ? (
-                <a href={externalUrl} target={"_blank"}>
+                <a href={externalUrl} target={"_blank"} tabIndex={-1}>
                   <ActionIcon
                     variant={"transparent"}
                     color={"gray"}
@@ -160,12 +164,21 @@ export const ListItem = ({
           {price !== null && (
             <Text fw={500}>{formatter.format(parseFloat(price))}</Text>
           )}
-          {sortable && (
+          {sortable ? (
             <GripVerticalIcon
               className={"ml-5 cursor-move"}
               {...attributes}
               {...listeners}
             />
+          ) : (
+            <ActionIcon
+              variant={"transparent"}
+              color={"white"}
+              className={"ml-3"}
+              onClick={() => openEditItemModal({ listId, itemId, forceUpdate })}
+            >
+              <PencilIcon className={"h-4 w-4"} />
+            </ActionIcon>
           )}
         </div>
       </Card>

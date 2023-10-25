@@ -8,9 +8,11 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 export const List = ({
   items,
   listId,
+  forceUpdate,
 }: {
   items: RouterOutputs["list"]["getList"]["items"];
   listId: string;
+  forceUpdate: () => void;
 }) => {
   const [ref] = useAutoAnimate();
   const showLinkSpace = items.some((i) => i.externalUrl) ?? false;
@@ -26,6 +28,7 @@ export const List = ({
             item={item}
             showLinkSpace={showLinkSpace}
             listId={listId}
+            forceUpdate={forceUpdate}
           />
         ))}
         {checkedItems.length > 0 && (
@@ -40,6 +43,7 @@ export const List = ({
             item={item}
             showLinkSpace={showLinkSpace}
             listId={listId}
+            forceUpdate={forceUpdate}
           />
         ))}
       </div>

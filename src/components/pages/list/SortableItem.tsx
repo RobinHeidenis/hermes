@@ -7,12 +7,13 @@ export const SortableItem = ({
   item,
   showLinkSpace,
   listId,
+  forceUpdate,
 }: ListItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: item.id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
   };
 
@@ -22,6 +23,7 @@ export const SortableItem = ({
         item={item}
         showLinkSpace={showLinkSpace}
         listId={listId}
+        forceUpdate={forceUpdate}
         attributes={attributes}
         listeners={listeners}
         sortable

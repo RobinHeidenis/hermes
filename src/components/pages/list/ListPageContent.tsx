@@ -5,6 +5,8 @@ import { List } from "~/components/pages/list/List";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useState } from "react";
+import { useForceUpdate } from "@mantine/hooks";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 export const ListPageContent = ({
   list,
@@ -20,6 +22,8 @@ export const ListPageContent = ({
     onSettled: () => utils.list.getList.invalidate({ listId: list.id }),
   });
   const [updateAmount, setUpdateAmount] = useState(0);
+  const forceUpdate = useForceUpdate();
+  const [ref, setEnabled] = useAutoAnimate();
 
   return (
     <div>
@@ -43,6 +47,7 @@ export const ListPageContent = ({
           }
           onClick={async () => {
             if (isReordering) {
+              setEnabled(true);
               if (updateAmount > 0) {
                 await mutateAsync({
                   listId: list.id,
@@ -53,6 +58,8 @@ export const ListPageContent = ({
                 });
                 setUpdateAmount(0);
               }
+            } else {
+              setEnabled(true);
             }
             setIsReordering(!isReordering);
           }}
@@ -60,16 +67,17 @@ export const ListPageContent = ({
           {isReordering ? "Done" : "Reorder"}
         </Button>
       </div>
-      <div className={"mt-4"}>
+      <div className={"mt-4"} ref={ref}>
         {isReordering ? (
           <SortableList
             items={list.items}
             listId={list.id}
             updateAmount={updateAmount}
             setUpdateAmount={setUpdateAmount}
+            forceUpdate={forceUpdate}
           />
         ) : (
-          <List items={list.items} listId={list.id} />
+          <List items={list.items} listId={list.id} forceUpdate={forceUpdate} />
         )}
       </div>
       {list.items.length === 0 && (
