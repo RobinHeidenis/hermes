@@ -39,7 +39,7 @@ export const SortableList = ({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-  const utils = api.useContext();
+  const utils = api.useUtils();
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;

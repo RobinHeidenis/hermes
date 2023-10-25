@@ -39,7 +39,7 @@ export const ListItem = ({
   disableSwipe,
 }: ListItemProps) => {
   const { id: itemId, name, price, quantity, checked, externalUrl } = item;
-  const utils = api.useContext();
+  const utils = api.useUtils();
   const { mutate: setItemChecked } = api.item.setItemChecked.useMutation({
     onMutate: async (checkedItem) => {
       await utils.list.getList.cancel({ listId });

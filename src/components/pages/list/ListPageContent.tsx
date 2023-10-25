@@ -15,7 +15,7 @@ export const ListPageContent = ({
   isReordering: boolean;
   setIsReordering: (isReordering: boolean) => void;
 }) => {
-  const utils = api.useContext();
+  const utils = api.useUtils();
   const { mutateAsync, isLoading } = api.list.updatePositions.useMutation({
     onSettled: () => utils.list.getList.invalidate({ listId: list.id }),
   });

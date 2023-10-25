@@ -16,9 +16,11 @@ export const DefaultWorkspaceForm = ({
     initialValues: { workspaceId: defaultWorkspaceId },
     validate: zodResolver(updateDefaultWorkspaceSchema),
   });
+  const utils = api.useUtils();
   const { mutate, isLoading } = api.user.setDefaultWorkspace.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       form.setInitialValues({ workspaceId: form.values.workspaceId });
+      await utils.user.getDefaultWorkspace.invalidate();
     },
   });
 

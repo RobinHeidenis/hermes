@@ -35,7 +35,7 @@ const CreateListItemModal = ({ listId }: { listId: string }) => {
     },
     onSettled: () => utils.list.getList.invalidate({ listId }),
   });
-  const utils = api.useContext();
+  const utils = api.useUtils();
   const form = useForm({
     initialValues: {
       name: "",
@@ -55,6 +55,7 @@ const CreateListItemModal = ({ listId }: { listId: string }) => {
       <TextInput
         label={"Name"}
         withAsterisk
+        data-autofocus
         placeholder={"Milk"}
         {...form.getInputProps("name")}
       />

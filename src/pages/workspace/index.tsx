@@ -17,7 +17,10 @@ export const WorkspaceIndex = () => {
   return (
     <CustomAppShell>
       <div className={"flex items-center justify-between"}>
-        <Title>Workspace Index</Title>
+        <div>
+          <Text c={"dimmed"}>Overview</Text>
+          <Title>Workspaces</Title>
+        </div>
         <Button
           variant={"light"}
           className={"self-start"}
@@ -27,11 +30,14 @@ export const WorkspaceIndex = () => {
           New workspace
         </Button>
       </div>
-      <div className={"mt-10 flex items-center"}>
+      <div className={"mt-5 flex items-center justify-center md:justify-start"}>
         <ShieldIcon className={"mr-2"} />
         <Title order={2}>My workspaces</Title>
       </div>
-      <Flex gap={30} className={"mt-5 flex-wrap"}>
+      <Flex
+        gap={30}
+        className={"mt-5 flex-wrap justify-center md:justify-start"}
+      >
         <ArrayDataDisplay
           skeleton={<WorkspaceSkeletons />}
           noItems={<Text>You don&apos;t own any workspaces</Text>}
@@ -41,11 +47,14 @@ export const WorkspaceIndex = () => {
           DisplayElement={WorkspaceCard}
         />
       </Flex>
-      <div className={"mt-5 flex items-center"}>
+      <div className={"mt-5 flex items-center justify-center md:justify-start"}>
         <UsersIcon className={"mr-2"} />
         <Title order={2}>Contributing workspaces</Title>
       </div>
-      <Flex gap={30} className={"mt-3 flex-wrap"}>
+      <Flex
+        gap={30}
+        className={"mt-3 flex-wrap justify-center md:justify-start"}
+      >
         <ArrayDataDisplay
           skeleton={<WorkspaceSkeletons />}
           noItems={<Text>You&apos;re not part of any workspaces</Text>}
