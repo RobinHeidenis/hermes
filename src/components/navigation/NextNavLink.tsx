@@ -10,7 +10,7 @@ export const NextNavLink = ({
 }: {
   href: string;
   label: string;
-  leftSection: ReactNode;
+  leftSection?: ReactNode;
   pathname?: string;
 }) => (
   <NavLink

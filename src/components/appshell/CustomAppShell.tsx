@@ -18,11 +18,26 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import { NextNavLink } from "~/components/navigation/NextNavLink";
 import { useRouter } from "next/router";
+import { api } from "~/utils/api";
+import Link from "next/link";
+
+const AppLogo = () => {
+  return (
+    <>
+      <Avatar radius={"xl"} className={"mr-2"}>
+        <ComponentIcon />
+      </Avatar>
+      <Title>Hermes</Title>
+    </>
+  );
+};
 
 export const CustomAppShell = ({ children }: PropsWithChildren) => {
   const { data } = useSession();
   const { white } = useMantineTheme();
   const { pathname } = useRouter();
+  const { data: defaultWorkspace, isFetched } =
+    api.user.getDefaultWorkspace.useQuery();
 
   return (
     <AppShell header={{ height: 60 }} padding="md">
@@ -30,12 +45,21 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
         pl={"sm"}
         className={"flex flex-row items-center justify-between"}
       >
-        <div className={"flex items-center"}>
-          <Avatar radius={"xl"} className={"mr-2"}>
-            <ComponentIcon />
-          </Avatar>
-          <Title>Hermes</Title>
-        </div>
+        {isFetched ? (
+          <Link
+            href={`/workspace/${defaultWorkspace?.id ?? ""}`}
+            className={
+              "flex items-center rounded-md px-2 py-1 hover:bg-[--mantine-color-default-hover]"
+            }
+          >
+            <AppLogo />
+          </Link>
+        ) : (
+          <div className={"flex items-center"}>
+            <AppLogo />
+          </div>
+        )}
+
         {data?.user && (
           <Menu zIndex={400}>
             <Menu.Target>

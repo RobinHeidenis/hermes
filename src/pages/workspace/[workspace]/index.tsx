@@ -49,7 +49,7 @@ export const WorkspaceDetailPage = () => {
           </div>
           <div className={"mt-3 flex"}>
             <Card className={"flex flex-row justify-center"}>
-              <Text className={"mr-2"}>Owned by:</Text>
+              <Text className={"mr-2"}>Owner:</Text>
               <UserAvatar
                 name={workspace.users.owner.name!}
                 image={workspace.users.owner.image!}
@@ -78,8 +78,8 @@ export const WorkspaceDetailPage = () => {
                       withArrow
                       position={"bottom-start"}
                     >
-                      <Popover.Target>
-                        <Avatar size={"sm"} ref={ref}>
+                      <Popover.Target ref={ref}>
+                        <Avatar size={"sm"}>
                           +{workspace.users.contributors.length - 3}
                         </Avatar>
                       </Popover.Target>
@@ -110,11 +110,16 @@ export const WorkspaceDetailPage = () => {
               </AvatarGroup>
             </Card>
           </div>
-          <div className={"mt-3 flex items-center"}>
+          <div
+            className={"mt-3 flex items-center justify-center md:justify-start"}
+          >
             <ListTodoIcon className={"mr-2"} />
             <Title order={2}>Lists</Title>
           </div>
-          <Flex gap={30} className={"mt-5 flex-wrap"}>
+          <Flex
+            gap={30}
+            className={"mt-5 flex-wrap justify-center md:justify-start"}
+          >
             <ArrayDataDisplay
               skeleton={<WorkspaceSkeletons />}
               noItems={"No items found :("}

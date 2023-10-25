@@ -5,7 +5,7 @@ import { api } from "~/utils/api";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { createListSchema } from "~/schemas/createListSchema";
+import { createListSchema } from "~/schemas/createList";
 
 const CreateListModal = ({ workspaceId }: { workspaceId: string }) => {
   const form = useForm({

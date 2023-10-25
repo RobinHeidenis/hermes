@@ -1,61 +1,54 @@
 import { CustomAppShell } from "~/components/appshell/CustomAppShell";
-import { ActionIcon, Image, Skeleton, Text, Title } from "@mantine/core";
+import { ActionIcon, Skeleton } from "@mantine/core";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import "react-swipeable-list/dist/styles.css";
-import { List } from "~/components/pages/list/List";
 import { PlusIcon } from "lucide-react";
 import { openCreateListItemModal } from "~/components/modals/CreateListItemModal";
+import { ListPageContent } from "~/components/pages/list/ListPageContent";
+import { useState } from "react";
 
 export const ListPage = () => {
   const { query } = useRouter();
+  const [isReordering, setIsReordering] = useState(false);
   const { data: list, isLoading } = api.list.getList.useQuery(
     { listId: query.list as string },
-    { enabled: !!query.list },
+    { enabled: !!query.list && !isReordering },
   );
 
   return (
     <>
       <CustomAppShell>
-        <div className={"flex w-full items-center justify-between"}>
-          <div className={"w-full"}>
-            <Text c={"dimmed"}>List</Text>
+        <div
+          className={
+            "flex w-full items-center justify-between sm:justify-center"
+          }
+        >
+          <div className={"w-full sm:w-2/3 md:w-1/2 3xl:w-1/4"}>
             {isLoading || !list ? (
               <Skeleton className={"mt-2 h-8 w-44"} />
             ) : (
-              <div className={"overflow-y-hidden"}>
-                <Title>{list.name}</Title>
-                <List items={list.items} listId={list.id} />
-                {list.items.length === 0 && (
-                  <div className={"mt-10 flex flex-col items-center"}>
-                    <Image
-                      src={"/no_data.svg"}
-                      alt={"No data illustration"}
-                      className={"h-1/2 w-1/2"}
-                    />
-                    <Title order={3} className={"mt-12"}>
-                      No items
-                    </Title>
-                    <Text className={"mt-5 text-center"}>
-                      This list is empty. Add items by clicking the plus button
-                    </Text>
-                  </div>
-                )}
-              </div>
+              <ListPageContent
+                list={list}
+                isReordering={isReordering}
+                setIsReordering={setIsReordering}
+              />
             )}
           </div>
         </div>
       </CustomAppShell>
-      <ActionIcon
-        radius={"xl"}
-        size={"xl"}
-        className={"absolute bottom-8 right-8 z-[200]"}
-        onClick={() =>
-          openCreateListItemModal({ listId: query.list as string })
-        }
-      >
-        <PlusIcon />
-      </ActionIcon>
+      {!isReordering && (
+        <ActionIcon
+          radius={"xl"}
+          size={"xl"}
+          className={"fixed bottom-8 right-8 z-[99]"}
+          onClick={() =>
+            openCreateListItemModal({ listId: query.list as string })
+          }
+        >
+          <PlusIcon />
+        </ActionIcon>
+      )}
     </>
   );
 };
