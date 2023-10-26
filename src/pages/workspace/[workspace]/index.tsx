@@ -2,12 +2,14 @@ import { CustomAppShell } from "~/components/appshell/CustomAppShell";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import {
+  ActionIcon,
   Avatar,
   AvatarGroup,
   Button,
   Card,
   Flex,
   LoadingOverlay,
+  Menu,
   Popover,
   Text,
   Title,
@@ -16,18 +18,28 @@ import { UserAvatar } from "~/components/pages/workspace/UserAvatar";
 import { ArrayDataDisplay, WorkspaceSkeletons } from "~/pages/workspace";
 import { ListCard } from "~/components/pages/workspace/ListCard";
 import { useHover } from "@mantine/hooks";
-import { BarChart3Icon, ListTodoIcon, PlusIcon } from "lucide-react";
+import {
+  BarChart3Icon,
+  ListTodoIcon,
+  LogOutIcon,
+  PlusIcon,
+  SettingsIcon,
+  TrashIcon,
+  UserPlusIcon,
+} from "lucide-react";
 import { openCreateListModal } from "~/components/modals/CreateListModal";
 import { useRequireAuth } from "~/hooks/useRequireSignin";
+import { openWorkspaceSettingsModal } from "~/components/modals/WorkspaceSettingsModal";
 
 export const WorkspaceDetailPage = () => {
-  useRequireAuth();
+  const { data: session } = useRequireAuth();
   const { query } = useRouter();
   const { data: workspace, isLoading } = api.workspace.getWorkspace.useQuery(
     { workspaceId: query.workspace as string },
     { enabled: !!query.workspace },
   );
   const { hovered, ref } = useHover();
+  const isOwner = workspace?.users.owner.id === session?.user?.id;
 
   return (
     <CustomAppShell>
@@ -40,14 +52,64 @@ export const WorkspaceDetailPage = () => {
               <Text c={"dimmed"}>Workspace</Text>
               <Title>{workspace.name}</Title>
             </div>
-            <Button
-              variant={"light"}
-              className={"self-start"}
-              leftSection={<PlusIcon className={"h-5 w-5"} />}
-              onClick={() => openCreateListModal({ workspaceId: workspace.id })}
-            >
-              New list
-            </Button>
+            <div className={"flex flex-row self-start"}>
+              <Button
+                variant={"light"}
+                leftSection={<PlusIcon className={"h-5 w-5"} />}
+                onClick={() =>
+                  openCreateListModal({ workspaceId: workspace.id })
+                }
+              >
+                New list
+              </Button>
+              <Menu>
+                <Menu.Target>
+                  <ActionIcon
+                    color={"gray"}
+                    variant={"transparent"}
+                    className={"ml-3"}
+                    size={"lg"}
+                  >
+                    <SettingsIcon className={"h-5 w-5"} />
+                  </ActionIcon>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  <Menu.Label>Workspace options</Menu.Label>
+                  <Menu.Item
+                    leftSection={<SettingsIcon className={"h-5 w-5"} />}
+                    onClick={openWorkspaceSettingsModal}
+                  >
+                    Settings
+                  </Menu.Item>
+                  <Menu.Item
+                    leftSection={<UserPlusIcon className={"h-5 w-5"} />}
+                    disabled
+                  >
+                    Invite contributors
+                  </Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Label>Danger zone</Menu.Label>
+                  {isOwner ? (
+                    <Menu.Item
+                      color={"red"}
+                      leftSection={<TrashIcon className={"h-5 w-5"} />}
+                      disabled
+                    >
+                      Delete workspace
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item
+                      color={"red"}
+                      leftSection={<LogOutIcon className={"h-5 w-5"} />}
+                      disabled
+                    >
+                      Leave workspace
+                    </Menu.Item>
+                  )}
+                </Menu.Dropdown>
+              </Menu>
+            </div>
           </div>
           <div className={"mt-3 flex"}>
             <Card className={"flex flex-row justify-center"}>

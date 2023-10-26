@@ -85,6 +85,7 @@ export const workspaceRouter = createTRPCRouter({
         with: {
           owner: {
             columns: {
+              id: true,
               name: true,
               image: true,
             },
