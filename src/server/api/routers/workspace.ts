@@ -1,9 +1,12 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { usersToWorkspaces, workspaces } from "~/server/db/schema";
 import { createWorkspaceSchema } from "~/schemas/createWorkspace";
 import { getWorkspaceSchema } from "~/schemas/getWorkspace";
 import { TRPCError } from "@trpc/server";
+import { listSettingSchema } from "~/schemas/listSettings";
+import { deleteWorkspaceSchema } from "~/schemas/deleteWorkspace";
+import { z } from "zod";
 
 export const workspaceRouter = createTRPCRouter({
   getWorkspaces: protectedProcedure.query(async ({ ctx }) => {
@@ -81,10 +84,12 @@ export const workspaceRouter = createTRPCRouter({
         columns: {
           id: true,
           name: true,
+          defaultListId: true,
         },
         with: {
           owner: {
             columns: {
+              id: true,
               name: true,
               image: true,
             },
@@ -128,11 +133,192 @@ export const workspaceRouter = createTRPCRouter({
       return {
         id: workspace.id,
         name: workspace.name,
+        defaultListId: workspace.defaultListId,
         users: {
           owner: workspace.owner,
           contributors: workspace.usersToWorkspaces.map((r) => r.user),
         },
         lists: workspace.lists,
       };
+    }),
+  updateListSettings: protectedProcedure
+    .input(listSettingSchema)
+    .mutation(async ({ ctx, input }) => {
+      const workspace = await ctx.db.query.workspaces.findFirst({
+        where: eq(workspaces.id, input.workspaceId),
+        columns: {
+          id: true,
+          ownerId: true,
+        },
+        with: {
+          lists: {
+            columns: {
+              id: true,
+            },
+          },
+          usersToWorkspaces: {
+            columns: {
+              userId: true,
+            },
+          },
+        },
+      });
+
+      if (!workspace)
+        throw new TRPCError({
+          message: "The workspace you're trying to update was not found",
+          code: "NOT_FOUND",
+        });
+
+      if (
+        workspace.ownerId !== ctx.session.user.id &&
+        !workspace.usersToWorkspaces.find(
+          (r) => r.userId === ctx.session.user.id,
+        )
+      )
+        throw new TRPCError({
+          message: "You don't have permission to update that list",
+          code: "UNAUTHORIZED",
+        });
+
+      if (input.listId && !workspace.lists.find((l) => l.id === input.listId))
+        throw new TRPCError({
+          message: "The list you're trying to set as default was not found",
+          code: "NOT_FOUND",
+        });
+
+      return ctx.db
+        .update(workspaces)
+        .set({
+          defaultListId: input.listId,
+          name: input.name,
+        })
+        .where(eq(workspaces.id, input.workspaceId))
+        .execute();
+    }),
+  delete: protectedProcedure
+    .input(deleteWorkspaceSchema)
+    .mutation(async ({ ctx, input }) => {
+      const workspace = await ctx.db.query.workspaces.findFirst({
+        where: eq(workspaces.id, input.workspaceId),
+        columns: {
+          id: true,
+          ownerId: true,
+        },
+        with: {
+          usersToWorkspaces: {
+            columns: {
+              userId: true,
+            },
+          },
+        },
+      });
+
+      if (!workspace)
+        throw new TRPCError({
+          message: "The workspace you're trying to delete was not found",
+          code: "NOT_FOUND",
+        });
+
+      if (workspace.ownerId !== ctx.session.user.id)
+        throw new TRPCError({
+          message: "You don't have permission to delete that list",
+          code: "UNAUTHORIZED",
+        });
+
+      return ctx.db
+        .delete(workspaces)
+        .where(eq(workspaces.id, input.workspaceId));
+    }),
+  leave: protectedProcedure
+    .input(deleteWorkspaceSchema)
+    .mutation(async ({ ctx, input }) => {
+      const workspace = await ctx.db.query.workspaces.findFirst({
+        where: eq(workspaces.id, input.workspaceId),
+        columns: {
+          id: true,
+          ownerId: true,
+        },
+        with: {
+          usersToWorkspaces: {
+            columns: {
+              userId: true,
+            },
+          },
+        },
+      });
+
+      if (!workspace)
+        throw new TRPCError({
+          message: "The workspace you're trying to delete was not found",
+          code: "NOT_FOUND",
+        });
+
+      if (
+        workspace.ownerId === ctx.session.user.id ||
+        !workspace.usersToWorkspaces.find(
+          (r) => r.userId === ctx.session.user.id,
+        )
+      )
+        throw new TRPCError({
+          message: "You don't have permission to delete that list",
+          code: "UNAUTHORIZED",
+        });
+
+      return ctx.db
+        .delete(usersToWorkspaces)
+        .where(
+          and(
+            eq(usersToWorkspaces.workspaceId, input.workspaceId),
+            eq(usersToWorkspaces.userId, ctx.session.user.id),
+          ),
+        );
+    }),
+  kickUser: protectedProcedure
+    .input(
+      z.object({ userId: z.string().uuid(), workspaceId: z.string().uuid() }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const workspace = await ctx.db.query.workspaces.findFirst({
+        where: eq(workspaces.id, input.workspaceId),
+        columns: {
+          id: true,
+          ownerId: true,
+        },
+        with: {
+          usersToWorkspaces: {
+            columns: {
+              userId: true,
+            },
+          },
+        },
+      });
+
+      if (!workspace)
+        throw new TRPCError({
+          message: "The workspace you're trying kick a user from was not found",
+          code: "NOT_FOUND",
+        });
+
+      if (workspace.ownerId !== ctx.session.user.id)
+        throw new TRPCError({
+          message: "You don't have permission to delete that list",
+          code: "UNAUTHORIZED",
+        });
+
+      if (!workspace.usersToWorkspaces.find((r) => r.userId === input.userId))
+        throw new TRPCError({
+          message: "That user was not found in this list",
+          code: "NOT_FOUND",
+        });
+
+      return ctx.db
+        .delete(usersToWorkspaces)
+        .where(
+          and(
+            eq(usersToWorkspaces.userId, input.userId),
+            eq(usersToWorkspaces.workspaceId, input.workspaceId),
+          ),
+        );
     }),
 });

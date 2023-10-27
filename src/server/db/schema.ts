@@ -91,7 +91,7 @@ export const workspaces = pgTable("workspaces", {
   defaultListId: uuid("default_list_id"),
   ownerId: text("owner_id")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -114,10 +114,10 @@ export const usersToWorkspaces = pgTable(
   {
     userId: text("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     workspaceId: uuid("workspace_id")
       .notNull()
-      .references(() => workspaces.id),
+      .references(() => workspaces.id, { onDelete: "cascade" }),
   },
   (t) => ({
     pk: primaryKey(t.userId, t.workspaceId),
@@ -142,7 +142,7 @@ export const lists = pgTable("lists", {
   id: uuid("id").primaryKey().defaultRandom(),
   workspaceId: uuid("workspace_id")
     .notNull()
-    .references(() => workspaces.id),
+    .references(() => workspaces.id, { onDelete: "cascade" }),
   name: text("name").default("Shopping List"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -166,7 +166,7 @@ export const items = pgTable("items", {
   checked: boolean("checked").default(false),
   listId: uuid("list_id")
     .notNull()
-    .references(() => lists.id),
+    .references(() => lists.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
