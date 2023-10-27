@@ -267,7 +267,7 @@ const ListUserCard = ({
               color={"red"}
               onClick={() =>
                 modals.openConfirmModal({
-                  title: "Remove user?",
+                  title: "Remove user? :(",
                   children: (
                     <div
                       className={"flex flex-col items-center justify-center"}
