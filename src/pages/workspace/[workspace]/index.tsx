@@ -9,7 +9,6 @@ import {
   Card,
   Flex,
   LoadingOverlay,
-  Menu,
   Popover,
   Text,
   Title,
@@ -21,11 +20,8 @@ import { useHover } from "@mantine/hooks";
 import {
   BarChart3Icon,
   ListTodoIcon,
-  LogOutIcon,
   PlusIcon,
   SettingsIcon,
-  TrashIcon,
-  UserPlusIcon,
 } from "lucide-react";
 import { openCreateListModal } from "~/components/modals/CreateListModal";
 import { useRequireAuth } from "~/hooks/useRequireSignin";
@@ -62,53 +58,17 @@ export const WorkspaceDetailPage = () => {
               >
                 New list
               </Button>
-              <Menu>
-                <Menu.Target>
-                  <ActionIcon
-                    color={"gray"}
-                    variant={"transparent"}
-                    className={"ml-3"}
-                    size={"lg"}
-                  >
-                    <SettingsIcon className={"h-5 w-5"} />
-                  </ActionIcon>
-                </Menu.Target>
-
-                <Menu.Dropdown>
-                  <Menu.Label>Workspace options</Menu.Label>
-                  <Menu.Item
-                    leftSection={<SettingsIcon className={"h-5 w-5"} />}
-                    onClick={openWorkspaceSettingsModal}
-                  >
-                    Settings
-                  </Menu.Item>
-                  <Menu.Item
-                    leftSection={<UserPlusIcon className={"h-5 w-5"} />}
-                    disabled
-                  >
-                    Invite contributors
-                  </Menu.Item>
-                  <Menu.Divider />
-                  <Menu.Label>Danger zone</Menu.Label>
-                  {isOwner ? (
-                    <Menu.Item
-                      color={"red"}
-                      leftSection={<TrashIcon className={"h-5 w-5"} />}
-                      disabled
-                    >
-                      Delete workspace
-                    </Menu.Item>
-                  ) : (
-                    <Menu.Item
-                      color={"red"}
-                      leftSection={<LogOutIcon className={"h-5 w-5"} />}
-                      disabled
-                    >
-                      Leave workspace
-                    </Menu.Item>
-                  )}
-                </Menu.Dropdown>
-              </Menu>
+              <ActionIcon
+                color={"gray"}
+                variant={"transparent"}
+                className={"ml-3"}
+                size={"lg"}
+                onClick={() =>
+                  openWorkspaceSettingsModal({ workspaceId: workspace.id })
+                }
+              >
+                <SettingsIcon className={"h-5 w-5"} />
+              </ActionIcon>
             </div>
           </div>
           <div className={"mt-3 flex"}>
@@ -119,60 +79,62 @@ export const WorkspaceDetailPage = () => {
                 image={workspace.users.owner.image!}
               />
             </Card>
-            <Card className={"ml-3 flex flex-row justify-center"}>
-              <Text className={"mr-2"}>Contributors:</Text>
-              <AvatarGroup>
-                {workspace.users.contributors.length > 3 ? (
-                  <>
-                    {workspace.users.contributors
-                      .slice(0, 3)
-                      .map(
-                        (user) =>
-                          user.name &&
-                          user.image && (
-                            <UserAvatar
-                              name={user.name}
-                              image={user.image}
-                              key={user.id}
-                            />
-                          ),
-                      )}
-                    <Popover
-                      opened={hovered}
-                      withArrow
-                      position={"bottom-start"}
-                    >
-                      <Popover.Target ref={ref}>
-                        <Avatar size={"sm"}>
-                          +{workspace.users.contributors.length - 3}
-                        </Avatar>
-                      </Popover.Target>
+            {workspace.users.contributors.length > 1 && (
+              <Card className={"ml-3 flex flex-row justify-center"}>
+                <Text className={"mr-2"}>Contributors:</Text>
+                <AvatarGroup>
+                  {workspace.users.contributors.length > 3 ? (
+                    <>
+                      {workspace.users.contributors
+                        .slice(0, 3)
+                        .map(
+                          (user) =>
+                            user.name &&
+                            user.image && (
+                              <UserAvatar
+                                name={user.name}
+                                image={user.image}
+                                key={user.id}
+                              />
+                            ),
+                        )}
+                      <Popover
+                        opened={hovered}
+                        withArrow
+                        position={"bottom-start"}
+                      >
+                        <Popover.Target ref={ref}>
+                          <Avatar size={"sm"}>
+                            +{workspace.users.contributors.length - 3}
+                          </Avatar>
+                        </Popover.Target>
 
-                      <Popover.Dropdown>
-                        {workspace.users.contributors.slice(3).map((user) => (
-                          <div className={"flex pl-2"} key={user.id}>
-                            <Avatar src={user.image} size={"sm"} />
-                            <Text className={"ml-2"}>{user.name}</Text>
-                          </div>
-                        ))}
-                      </Popover.Dropdown>
-                    </Popover>
-                  </>
-                ) : (
-                  workspace.users.contributors.map(
-                    (user) =>
-                      user.name &&
-                      user.image && (
-                        <UserAvatar
-                          name={user.name}
-                          image={user.image}
-                          key={user.id}
-                        />
-                      ),
-                  )
-                )}
-              </AvatarGroup>
-            </Card>
+                        <Popover.Dropdown>
+                          {workspace.users.contributors.slice(3).map((user) => (
+                            <div className={"flex pl-2"} key={user.id}>
+                              <Avatar src={user.image} size={"sm"} />
+                              <Text className={"ml-2"}>{user.name}</Text>
+                            </div>
+                          ))}
+                        </Popover.Dropdown>
+                      </Popover>
+                    </>
+                  ) : (
+                    workspace.users.contributors.map(
+                      (user) =>
+                        user.name &&
+                        user.image && (
+                          <UserAvatar
+                            name={user.name}
+                            image={user.image}
+                            key={user.id}
+                          />
+                        ),
+                    )
+                  )}
+                </AvatarGroup>
+              </Card>
+            )}
           </div>
           <div
             className={"mt-3 flex items-center justify-center md:justify-start"}
