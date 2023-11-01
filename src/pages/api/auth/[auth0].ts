@@ -1,14 +1,12 @@
-// This is simply to import env and run the side effects of replacing the base url for the sdk
-// noinspection JSUnusedLocalSymbols
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _ = env.AUTH0_BASE_URL;
+process.env.AUTH0_BASE_URL =
+  env.AUTH0_BASE_URL || "https://" + process.env.VERCEL_URL;
 
+import { env } from "~/env.mjs";
 import { handleAuth, handleCallback, handleLogin } from "@auth0/nextjs-auth0";
 import { eq } from "drizzle-orm";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "~/server/db";
 import { users } from "~/server/db/schema";
-import { env } from "~/env.mjs";
 
 declare module "@auth0/nextjs-auth0" {
   interface Claims {
