@@ -166,7 +166,7 @@ export const ListItem = ({
           )}
           {sortable ? (
             <GripVerticalIcon
-              className={"ml-5 cursor-move touch-manipulation"}
+              className={"ml-5 cursor-move touch-none"}
               {...attributes}
               {...listeners}
             />
