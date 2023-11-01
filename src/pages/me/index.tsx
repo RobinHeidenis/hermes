@@ -1,22 +1,17 @@
-import { useRequireAuth } from "~/hooks/useRequireSignin";
 import { CustomAppShell } from "~/components/appshell/CustomAppShell";
 import { Grid, Title } from "@mantine/core";
 import { ProfilePageContent } from "~/components/pages/me/ProfilePageContent";
 import { ProfilePageSkeleton } from "~/components/pages/me/ProfilePageSkeleton";
 import { api } from "~/utils/api";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 
-export const ProfilePage = () => {
-  const { data } = useRequireAuth();
+export const ProfilePage = withPageAuthRequired(({ user }) => {
   const { data: defaultWorkspace, isLoading: isGetDefaultWorkspaceLoading } =
     api.user.getDefaultWorkspace.useQuery();
   const { data: workspaces, isLoading: isGetWorkspacesLoading } =
     api.workspace.getWorkspaces.useQuery();
   const isLoading =
-    !data ||
-    !data.user ||
-    isGetDefaultWorkspaceLoading ||
-    isGetWorkspacesLoading ||
-    !workspaces;
+    !workspaces || isGetDefaultWorkspaceLoading || isGetWorkspacesLoading;
 
   return (
     <CustomAppShell>
@@ -28,7 +23,7 @@ export const ProfilePage = () => {
               <ProfilePageSkeleton />
             ) : (
               <ProfilePageContent
-                user={data.user}
+                user={user}
                 defaultWorkspace={defaultWorkspace}
                 workspaces={workspaces}
               />
@@ -38,6 +33,6 @@ export const ProfilePage = () => {
       </div>
     </CustomAppShell>
   );
-};
+});
 
 export default ProfilePage;

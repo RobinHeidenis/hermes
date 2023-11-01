@@ -130,6 +130,17 @@ export const workspaceRouter = createTRPCRouter({
           code: "NOT_FOUND",
         });
 
+      if (
+        workspace.owner.id !== ctx.session.user.id &&
+        !workspace.usersToWorkspaces.find(
+          (r) => r.user.id === ctx.session.user.id,
+        )
+      )
+        throw new TRPCError({
+          message: "You don't have permission to view that workspace",
+          code: "UNAUTHORIZED",
+        });
+
       return {
         id: workspace.id,
         name: workspace.name,
@@ -222,7 +233,7 @@ export const workspaceRouter = createTRPCRouter({
 
       if (workspace.ownerId !== ctx.session.user.id)
         throw new TRPCError({
-          message: "You don't have permission to delete that list",
+          message: "You don't have permission to delete that workspace",
           code: "UNAUTHORIZED",
         });
 
@@ -250,7 +261,7 @@ export const workspaceRouter = createTRPCRouter({
 
       if (!workspace)
         throw new TRPCError({
-          message: "The workspace you're trying to delete was not found",
+          message: "The workspace you're trying to leave was not found",
           code: "NOT_FOUND",
         });
 
@@ -261,7 +272,7 @@ export const workspaceRouter = createTRPCRouter({
         )
       )
         throw new TRPCError({
-          message: "You don't have permission to delete that list",
+          message: "You don't have permission to leave that workspace",
           code: "UNAUTHORIZED",
         });
 

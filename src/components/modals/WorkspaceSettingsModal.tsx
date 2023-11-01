@@ -24,13 +24,14 @@ import { api } from "~/utils/api";
 import { useForm, zodResolver } from "@mantine/form";
 import { listSettingSchema } from "~/schemas/listSettings";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 const WorkspaceSettingsModal = ({ workspaceId }: { workspaceId: string }) => {
-  const { data: session } = useSession();
+  const { user } = useUser();
   const { data } = api.workspace.getWorkspace.useQuery({ workspaceId });
   const workspace = data!;
-  const currentUserIsOwner = session?.user.id === workspace.users.owner.id;
+  const currentUserIsOwner = user?.id === workspace.users.owner.id;
+
   return (
     <div className={"flex flex-col"}>
       {currentUserIsOwner && (
@@ -114,7 +115,7 @@ const SettingsForm = ({
     >
       <Title order={5}>Settings</Title>
       <TextInput
-        label={"List name"}
+        label={"Workspace name"}
         className={"mt-1"}
         placeholder={"My household"}
         {...form.getInputProps("name")}
@@ -156,8 +157,8 @@ const ListUsersSection = ({
   currentUserIsOwner?: boolean;
   workspaceId: string;
 }) => {
-  const { data: session } = useSession();
-  const userId = session?.user.id;
+  const { user } = useUser();
+  const userId = user?.id;
 
   return (
     <>
@@ -314,6 +315,7 @@ export const DangerZoneSection = ({
     api.workspace.leave.useMutation({
       onSuccess: () => router.push("/workspace"),
     });
+
   return (
     <>
       <Title order={5} className={"mt-5"}>

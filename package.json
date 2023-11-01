@@ -7,6 +7,7 @@
     "build": "next build",
     "db:push": "dotenv drizzle-kit push:pg",
     "db:generate": "dotenv drizzle-kit generate:pg",
+    "db:migration_drop": "dotenv drizzle-kit drop",
     "db:studio": "dotenv drizzle-kit studio",
     "dev": "next dev",
     "lint": "next lint",
@@ -15,6 +16,7 @@
   "dependencies": {
     "@auth/core": "^0.18.0",
     "@auth/drizzle-adapter": "^0.3.5",
+    "@auth0/nextjs-auth0": "^3.2.0",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
@@ -35,6 +37,7 @@
     "@trpc/next": "^10.42.0",
     "@trpc/react-query": "^10.42.0",
     "@trpc/server": "^10.42.0",
+    "auth0": "^4.1.0",
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.28.6",
     "lucide-react": "^0.288.0",

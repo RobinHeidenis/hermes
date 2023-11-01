@@ -1,5 +1,3 @@
-// page that shows all workspaces
-
 import { CustomAppShell } from "~/components/appshell/CustomAppShell";
 import { Button, Flex, Text, Title } from "@mantine/core";
 import { WorkspaceCard } from "~/components/pages/workspace/WorkspaceCard";
@@ -7,13 +5,12 @@ import { PlusIcon, ShieldIcon, UsersIcon } from "lucide-react";
 import { api } from "~/utils/api";
 import { SkeletonWorkspaceCard } from "~/components/pages/workspace/SkeletonWorkspaceCard";
 import type { ComponentType, ReactNode } from "react";
-import { useRequireAuth } from "~/hooks/useRequireSignin";
 import { openCreateWorkspaceModal } from "~/components/modals/CreateWorkspaceModal";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 
-export const WorkspaceIndex = () => {
-  useRequireAuth();
-
+export const WorkspaceIndex = withPageAuthRequired(() => {
   const { data, isLoading } = api.workspace.getWorkspaces.useQuery();
+
   return (
     <CustomAppShell>
       <div className={"flex items-center justify-between"}>
@@ -66,7 +63,7 @@ export const WorkspaceIndex = () => {
       </Flex>
     </CustomAppShell>
   );
-};
+});
 
 interface ArrayDataDisplayProps<T extends Array<{ id: string }>, R> {
   skeleton: ReactNode;

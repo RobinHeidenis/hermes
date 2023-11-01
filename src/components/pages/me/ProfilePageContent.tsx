@@ -1,4 +1,3 @@
-import type { Session } from "next-auth";
 import { zodResolver } from "@mantine/form";
 import { Card, Grid, Text, Title } from "@mantine/core";
 import { UserForm } from "./UserForm";
@@ -10,13 +9,14 @@ import {
 import { UserCardPreview } from "./UserCardPreview";
 import { DefaultWorkspaceCard } from "./DefaultWorkspaceCard";
 import type { RouterOutputs } from "~/utils/api";
+import type { UserProfile } from "@auth0/nextjs-auth0/client";
 
 export const ProfilePageContent = ({
   user,
   defaultWorkspace,
   workspaces,
 }: {
-  user: Session["user"];
+  user: UserProfile;
   defaultWorkspace: RouterOutputs["user"]["getDefaultWorkspace"] | undefined;
   workspaces: RouterOutputs["workspace"]["getWorkspaces"];
 }) => {
@@ -37,8 +37,8 @@ export const ProfilePageContent = ({
         order={{ base: 2, sm: 1 }}
         className={"mt-20 sm:mt-0"}
       >
-        <Card className={"xs:w-72 mt-3"}>
-          <UserForm image={user.image} />
+        <Card className={"mt-3 xs:w-72"}>
+          <UserForm image={user.picture} />
         </Card>
       </Grid.Col>
       <Grid.Col span={{ base: 12, sm: 6 }} order={{ base: 1, sm: 2 }}>

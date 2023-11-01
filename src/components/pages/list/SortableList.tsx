@@ -5,7 +5,7 @@ import {
   closestCenter,
   DndContext,
   KeyboardSensor,
-  TouchSensor,
+  PointerSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -36,7 +36,7 @@ export const SortableList = ({
 }) => {
   const showLinkSpace = items.some((i) => i.externalUrl) ?? false;
   const sensors = useSensors(
-    useSensor(TouchSensor),
+    useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
