@@ -1,3 +1,60 @@
 @import "tailwind.css";
 @import "@mantine/core/styles.css";
 @tailwind utilities;
+
+.swipeable {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    background-color: #f2f2f2;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.swipeable.swipeable-active {
+    transform: translateX(-100%);
+}
+
+.swipeable-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 10px;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.swipeable-background-left {
+    background-color: #00b894;
+}
+
+.swipeable-background-right {
+    background-color: #e74c3c;
+}
+
+.text-check {
+    margin-left: 5px;
+}
+
+.text-delete {
+    margin-right: 5px;
+}
+
+.swipeable-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    padding: 10px;
+}
+
+.icon-checkmark::before {
+    content: '✔';
+}
+
+.icon-delete::before {
+    content: '❌';
+}

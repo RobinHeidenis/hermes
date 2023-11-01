@@ -1,9 +1,9 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { ListItemProps } from "~/components/pages/list/ListItem";
-import { ListItem } from "~/components/pages/list/ListItem";
+import type { ListItemProps } from "~/components/pages/list/UnifiedList";
+import { ListItemCard } from "~/components/pages/list/ListItemCard";
 
-export const SortableItem = ({
+export const SortableListItem = ({
   item,
   showLinkSpace,
   listId,
@@ -18,16 +18,15 @@ export const SortableItem = ({
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
-      <ListItem
+    <div ref={setNodeRef} style={style} className={"mb-2"}>
+      <ListItemCard
+        listId={listId}
         item={item}
         showLinkSpace={showLinkSpace}
-        listId={listId}
+        sortable
         forceUpdate={forceUpdate}
         attributes={attributes}
         listeners={listeners}
-        sortable
-        disableSwipe
       />
     </div>
   );

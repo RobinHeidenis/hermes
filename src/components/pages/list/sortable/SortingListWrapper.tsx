@@ -1,3 +1,4 @@
+import type { PropsWithChildren } from "react";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import type { DragEndEvent } from "@dnd-kit/core";
@@ -15,26 +16,23 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { SortableItem } from "~/components/pages/list/SortableItem";
 import {
   restrictToParentElement,
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers";
 
-export const SortableList = ({
+export const SortingListWrapper = ({
   items,
+  children,
   listId,
-  updateAmount,
   setUpdateAmount,
-  forceUpdate,
-}: {
+  updateAmount,
+}: PropsWithChildren<{
   items: RouterOutputs["list"]["getList"]["items"];
   listId: string;
-  updateAmount: number;
   setUpdateAmount: (updateAmount: number) => void;
-  forceUpdate: () => void;
-}) => {
-  const showLinkSpace = items.some((i) => i.externalUrl) ?? false;
+  updateAmount: number;
+}>) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -42,7 +40,6 @@ export const SortableList = ({
     }),
   );
   const utils = api.useUtils();
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
@@ -61,7 +58,6 @@ export const SortableList = ({
       setUpdateAmount(updateAmount + 1);
     }
   };
-
   return (
     <DndContext
       sensors={sensors}
@@ -70,17 +66,7 @@ export const SortableList = ({
       modifiers={[restrictToVerticalAxis, restrictToParentElement]}
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
-        {items.map((item) => {
-          return (
-            <SortableItem
-              key={item.id}
-              item={item}
-              showLinkSpace={showLinkSpace}
-              listId={listId}
-              forceUpdate={forceUpdate}
-            />
-          );
-        })}
+        {children}
       </SortableContext>
     </DndContext>
   );
