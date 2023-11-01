@@ -26,7 +26,7 @@ export default function Home() {
             </Button>
           </>
         ) : (
-          <Button component={"a"} href={"api/auth/login"}>
+          <Button component={"a"} href={"api/auth/login?returnTo=/workspace"}>
             Login
           </Button>
         )}
