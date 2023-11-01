@@ -16,7 +16,8 @@ export const env = createEnv({
       ),
     AUTH0_SECRET: z.string().min(1),
     AUTH0_DOMAIN: z.string().min(1),
-    AUTH0_BASE_URL: z.string().url().min(1).optional().default(process.env.VERCEL_URL ?? ""),
+    // FIXME: figure out how to force this to be a URL
+    AUTH0_BASE_URL: z.string().min(1).optional().default(process.env.VERCEL_URL ?? ""),
     AUTH0_ISSUER_BASE_URL: z.string().url().min(1),
     AUTH0_CLIENT_ID: z.string().min(1),
     AUTH0_CLIENT_SECRET: z.string().min(1),
