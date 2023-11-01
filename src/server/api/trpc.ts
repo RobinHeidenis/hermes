@@ -12,8 +12,9 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "~/server/db";
-import { type Session } from "next-auth";
-import { auth } from "~/../auth";
+import type { Session } from "@auth0/nextjs-auth0";
+import { getSession } from "@auth0/nextjs-auth0";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
  * 1. CONTEXT
@@ -24,7 +25,9 @@ import { auth } from "~/../auth";
  */
 
 type CreateContextOptions = {
-  session: Session | null;
+  session: Session | null | undefined;
+  req: NextApiRequest;
+  res: NextApiResponse;
 };
 
 /**
@@ -41,6 +44,8 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     db,
     session: opts.session,
+    req: opts.req,
+    res: opts.res,
   };
 };
 
@@ -52,23 +57,9 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
-  const response = {
-    ...res,
-    headers: {
-      append: (s: string) => {
-        res.setHeader("set-cookie", s);
-      },
-    },
-  };
+  const session = await getSession(req, res);
 
-  // Get the session from the server using the getServerSession wrapper function
-  // We're in some pretty sketchy territory anyway, might as well expect an error.
-  // I'm not sure if this works at all, but so far it looks okay.
-  // The problem is next-auth tries to append cookies from the core response (?) to the nextjs response (?),
-  // but the next response doesn't have the headers property set at all. This causes it to throw an error.
-  // @ts-expect-error By doing this it somehow magically does work
-  const session = await auth(req, response);
-  return createInnerTRPCContext({ session });
+  return createInnerTRPCContext({ session, req, res });
 };
 
 /**
@@ -118,13 +109,17 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session?.user) {
+  if (!ctx.session?.user?.sub) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      session: {
+        ...ctx.session,
+        user: { ...ctx.session.user, id: ctx.session.user.sub },
+      },
     },
   });
 });

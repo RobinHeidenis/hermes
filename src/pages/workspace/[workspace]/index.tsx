@@ -24,18 +24,26 @@ import {
   SettingsIcon,
 } from "lucide-react";
 import { openCreateListModal } from "~/components/modals/CreateListModal";
-import { useRequireAuth } from "~/hooks/useRequireSignin";
 import { openWorkspaceSettingsModal } from "~/components/modals/WorkspaceSettingsModal";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 
-export const WorkspaceDetailPage = () => {
-  const { data: session } = useRequireAuth();
+export const WorkspaceDetailPage = withPageAuthRequired(() => {
   const { query } = useRouter();
   const { data: workspace, isLoading } = api.workspace.getWorkspace.useQuery(
     { workspaceId: query.workspace as string },
     { enabled: !!query.workspace },
   );
   const { hovered, ref } = useHover();
-  const isOwner = workspace?.users.owner.id === session?.user?.id;
+
+  if (isLoading || !workspace) {
+    return (
+      <CustomAppShell>
+        <LoadingOverlay visible />
+      </CustomAppShell>
+    );
+  }
+
+  const { owner, contributors } = workspace.users;
 
   return (
     <CustomAppShell>
@@ -74,18 +82,15 @@ export const WorkspaceDetailPage = () => {
           <div className={"mt-3 flex"}>
             <Card className={"flex flex-row justify-center"}>
               <Text className={"mr-2"}>Owner:</Text>
-              <UserAvatar
-                name={workspace.users.owner.name!}
-                image={workspace.users.owner.image!}
-              />
+              <UserAvatar name={owner.name!} image={owner.image!} />
             </Card>
-            {workspace.users.contributors.length > 1 && (
+            {contributors.length > 1 && (
               <Card className={"ml-3 flex flex-row justify-center"}>
                 <Text className={"mr-2"}>Contributors:</Text>
                 <AvatarGroup>
-                  {workspace.users.contributors.length > 3 ? (
+                  {contributors.length > 3 ? (
                     <>
-                      {workspace.users.contributors
+                      {contributors
                         .slice(0, 3)
                         .map(
                           (user) =>
@@ -105,12 +110,12 @@ export const WorkspaceDetailPage = () => {
                       >
                         <Popover.Target ref={ref}>
                           <Avatar size={"sm"}>
-                            +{workspace.users.contributors.length - 3}
+                            +{contributors.length - 3}
                           </Avatar>
                         </Popover.Target>
 
                         <Popover.Dropdown>
-                          {workspace.users.contributors.slice(3).map((user) => (
+                          {contributors.slice(3).map((user) => (
                             <div className={"flex pl-2"} key={user.id}>
                               <Avatar src={user.image} size={"sm"} />
                               <Text className={"ml-2"}>{user.name}</Text>
@@ -120,7 +125,7 @@ export const WorkspaceDetailPage = () => {
                       </Popover>
                     </>
                   ) : (
-                    workspace.users.contributors.map(
+                    contributors.map(
                       (user) =>
                         user.name &&
                         user.image && (
@@ -164,6 +169,6 @@ export const WorkspaceDetailPage = () => {
       )}
     </CustomAppShell>
   );
-};
+});
 
 export default WorkspaceDetailPage;

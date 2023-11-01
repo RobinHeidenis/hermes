@@ -15,11 +15,11 @@ import {
   SettingsIcon,
   UserIcon,
 } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
 import { NextNavLink } from "~/components/navigation/NextNavLink";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import Link from "next/link";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 const AppLogo = () => {
   return (
@@ -33,7 +33,7 @@ const AppLogo = () => {
 };
 
 export const CustomAppShell = ({ children }: PropsWithChildren) => {
-  const { data } = useSession();
+  const { user } = useUser();
   const { white } = useMantineTheme();
   const { pathname } = useRouter();
   const { data: defaultWorkspace, isFetched } =
@@ -60,23 +60,23 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
           </div>
         )}
 
-        {data?.user && (
+        {user && (
           <Menu zIndex={400}>
             <Menu.Target>
               <UnstyledButton
                 className={`mr-5 flex items-center rounded-md p-2 hover:bg-[--mantine-color-default-hover]`}
               >
-                <Avatar src={data.user.image} className={"mr-3"} />
-                <Text>{data.user.name}</Text>
+                <Avatar src={user.picture} className={"mr-3"} />
+                <Text>{user.name}</Text>
               </UnstyledButton>
             </Menu.Target>
 
             <Menu.Dropdown>
               <Menu.Label className={"flex items-center"}>
-                <Avatar src={data.user.image} className={"mr-3"} />
+                <Avatar src={user.picture} className={"mr-3"} />
                 <div>
-                  <Text c={white}>{data.user.name}</Text>
-                  {data.user.email}
+                  <Text c={white}>{user.name}</Text>
+                  {user.email}
                 </div>
               </Menu.Label>
               <Menu.Divider />
@@ -110,7 +110,8 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
               <Menu.Item
                 color="red"
                 leftSection={<LogOutIcon className={"h-4 w-4"} />}
-                onClick={() => void signOut()}
+                href={"/api/auth/logout"}
+                component={"a"}
               >
                 Sign out
               </Menu.Item>
