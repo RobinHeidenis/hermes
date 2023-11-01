@@ -94,9 +94,12 @@ export const userRouter = createTRPCRouter({
           user: { ...ctx.session.user, name: input.name, email: input.email },
         });
 
-        return await ctx.db.update(users).set({
-          name: input.name,
-        });
+        return await ctx.db
+          .update(users)
+          .set({
+            name: input.name,
+          })
+          .where(eq(users.id, ctx.session.user.id));
       }
 
       await client.users.update(
@@ -109,9 +112,12 @@ export const userRouter = createTRPCRouter({
         user: { ...ctx.session.user, name: input.name, email: input.email },
       });
 
-      return await ctx.db.update(users).set({
-        name: input.name,
-        email: input.email,
-      });
+      return await ctx.db
+        .update(users)
+        .set({
+          name: input.name,
+          email: input.email,
+        })
+        .where(eq(users.id, ctx.session.user.id));
     }),
 });
