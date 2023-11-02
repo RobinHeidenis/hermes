@@ -1,33 +1,32 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import type { ListItemProps } from "~/components/pages/list/UnifiedList";
 import { ListItemCard } from "~/components/pages/list/ListItemCard";
+import { Draggable } from "@hello-pangea/dnd";
 
 export const SortableListItem = ({
   item,
   showLinkSpace,
   listId,
   forceUpdate,
-}: ListItemProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: item.id });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    transition,
-  };
-
+  index,
+}: ListItemProps & { index: number }) => {
   return (
-    <div ref={setNodeRef} style={style} className={"mb-2"}>
-      <ListItemCard
-        listId={listId}
-        item={item}
-        showLinkSpace={showLinkSpace}
-        sortable
-        forceUpdate={forceUpdate}
-        attributes={attributes}
-        listeners={listeners}
-      />
-    </div>
+    <Draggable draggableId={item.id} index={index}>
+      {(provided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          className={"mb-2"}
+        >
+          <ListItemCard
+            listId={listId}
+            item={item}
+            showLinkSpace={showLinkSpace}
+            sortable
+            forceUpdate={forceUpdate}
+            handleProps={provided.dragHandleProps}
+          />
+        </div>
+      )}
+    </Draggable>
   );
 };

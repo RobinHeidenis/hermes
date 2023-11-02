@@ -1,25 +1,23 @@
 import type { PropsWithChildren } from "react";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
-import type { DragEndEvent } from "@dnd-kit/core";
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import {
-  restrictToParentElement,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
+import type { DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+
+const reorder = (
+  list: RouterOutputs["list"]["getList"]["items"],
+  startIndex: number,
+  endIndex: number,
+) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+
+  if (!removed) return result;
+
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 
 export const SortingListWrapper = ({
   items,
@@ -33,41 +31,38 @@ export const SortingListWrapper = ({
   setUpdateAmount: (updateAmount: number) => void;
   updateAmount: number;
 }>) => {
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
   const utils = api.useUtils();
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      const movedItems = arrayMove(
-        [...items],
-        items.findIndex((item) => item.id === active.id),
-        items.findIndex((item) => item.id === over?.id),
-      );
-      utils.list.getList.setData({ listId }, (data) => {
-        if (!data) return data;
-        return {
-          ...data,
-          items: movedItems,
-        };
-      });
-      setUpdateAmount(updateAmount + 1);
-    }
+
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    if (result.destination.index === result.source.index) return;
+
+    const movedItems = reorder(
+      [...items],
+      result.source.index,
+      result.destination.index,
+    );
+
+    utils.list.getList.setData({ listId }, (data) => {
+      if (!data) return data;
+      return {
+        ...data,
+        items: movedItems,
+      };
+    });
+    setUpdateAmount(updateAmount + 1);
   };
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-      modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-    >
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
-        {children}
-      </SortableContext>
-    </DndContext>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Droppable droppableId={"list"}>
+        {(provided) => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
+            {children}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 };

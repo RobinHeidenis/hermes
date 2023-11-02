@@ -7,7 +7,9 @@ export const SwipeableListWrapper = ({ children }: PropsWithChildren) => {
 
   return (
     <SwipeableList threshold={0.2}>
-      <div ref={ref}>{children}</div>
+      <>
+        <div ref={ref}>{children}</div>
+      </>
     </SwipeableList>
   );
 };

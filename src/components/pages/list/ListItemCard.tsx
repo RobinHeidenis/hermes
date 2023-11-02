@@ -1,9 +1,8 @@
-import type { DraggableAttributes } from "@dnd-kit/core";
-import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { ActionIcon, Card, Loader, Text } from "@mantine/core";
 import { GripVerticalIcon, LinkIcon, PencilIcon } from "lucide-react";
 import { openEditItemModal } from "~/components/modals/EditItemModal";
 import type { RouterOutputs } from "~/utils/api";
+import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 
 type ListItem = RouterOutputs["list"]["getList"]["items"][number];
 
@@ -12,19 +11,17 @@ export const ListItemCard = ({
   item,
   listId,
   sortable,
-  attributes,
-  listeners,
   showLinkSpace,
   forceUpdate,
+  handleProps,
 }: {
   itemChecked?: boolean;
   item: ListItem;
   listId: string;
   sortable?: boolean;
-  attributes?: DraggableAttributes;
-  listeners?: SyntheticListenerMap | undefined;
   showLinkSpace?: boolean;
   forceUpdate: () => void;
+  handleProps: DraggableProvidedDragHandleProps | null | undefined;
 }) => {
   const formatter = new Intl.NumberFormat(undefined, {
     currency: "EUR",
@@ -63,11 +60,9 @@ export const ListItemCard = ({
           <Text fw={500}>{formatter.format(parseFloat(item.price))}</Text>
         )}
         {sortable ? (
-          <GripVerticalIcon
-            className={"ml-5 cursor-move touch-none"}
-            {...attributes}
-            {...listeners}
-          />
+          <div {...handleProps}>
+            <GripVerticalIcon className={"ml-5 cursor-move touch-none"} />
+          </div>
         ) : (
           <ActionIcon
             variant={"transparent"}

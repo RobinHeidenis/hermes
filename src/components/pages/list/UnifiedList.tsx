@@ -1,7 +1,5 @@
 import type { RouterOutputs } from "~/utils/api";
-import type { DraggableAttributes } from "@dnd-kit/core";
 import { CheckIcon, Title } from "@mantine/core";
-import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { SortingListWrapper } from "~/components/pages/list/sortable/SortingListWrapper";
 import { SwipeableListWrapper } from "~/components/pages/list/swipeable/SwipeableListWrapper";
 import { SwipeableListItem } from "~/components/pages/list/swipeable/SwipeableListItem";
@@ -14,8 +12,6 @@ export interface ListItemProps {
   showLinkSpace?: boolean;
   listId: string;
   forceUpdate: () => void;
-  attributes?: DraggableAttributes;
-  listeners?: SyntheticListenerMap | undefined;
   sortable?: boolean;
   disableSwipe?: boolean;
 }
@@ -47,7 +43,7 @@ export const UnifiedList = ({
         setUpdateAmount={setUpdateAmount}
         updateAmount={updateAmount}
       >
-        {items.map((item) => {
+        {items.map((item, index) => {
           return (
             <SortableListItem
               key={item.id}
@@ -55,6 +51,7 @@ export const UnifiedList = ({
               showLinkSpace={showLinkSpace}
               listId={listId}
               forceUpdate={forceUpdate}
+              index={index}
             />
           );
         })}
