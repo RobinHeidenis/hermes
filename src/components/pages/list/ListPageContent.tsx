@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useForceUpdate } from "@mantine/hooks";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { UnifiedList } from "~/components/pages/list/UnifiedList";
+import { ListMenu } from "~/components/pages/list/ListMenu";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 export const ListPageContent = ({
   list,
@@ -17,6 +19,7 @@ export const ListPageContent = ({
   setIsReordering: (isReordering: boolean) => void;
 }) => {
   const utils = api.useUtils();
+  const { user } = useUser();
   const { mutateAsync, isLoading } = api.list.updatePositions.useMutation({
     onSettled: () => utils.list.getList.invalidate({ listId: list.id }),
   });
@@ -31,35 +34,44 @@ export const ListPageContent = ({
           <Text c={"dimmed"}>List</Text>
           <Title>{list.name}</Title>
         </div>
-        <Button
-          variant={"light"}
-          leftSection={
-            isReordering ? (
-              isLoading ? (
-                <Loader color={"blue"} size={"xs"} />
+        <div className={"flex"}>
+          <Button
+            variant={"light"}
+            leftSection={
+              isReordering ? (
+                isLoading ? (
+                  <Loader color={"blue"} size={"xs"} />
+                ) : (
+                  <CheckIcon />
+                )
               ) : (
-                <CheckIcon />
+                <ArrowDownWideNarrowIcon />
               )
-            ) : (
-              <ArrowDownWideNarrowIcon />
-            )
-          }
-          onClick={async () => {
-            if (isReordering && updateAmount > 0) {
-              await mutateAsync({
-                listId: list.id,
-                items: list.items.map(({ id }, index) => ({
-                  id,
-                  position: index,
-                })),
-              });
-              setUpdateAmount(0);
             }
-            setIsReordering(!isReordering);
-          }}
-        >
-          {isReordering ? "Done" : "Reorder"}
-        </Button>
+            onClick={async () => {
+              if (isReordering && updateAmount > 0) {
+                await mutateAsync({
+                  listId: list.id,
+                  items: list.items.map(({ id }, index) => ({
+                    id,
+                    position: index,
+                  })),
+                });
+                setUpdateAmount(0);
+              }
+              setIsReordering(!isReordering);
+            }}
+          >
+            {isReordering ? "Done" : "Reorder"}
+          </Button>
+          <ListMenu
+            listId={list.id}
+            items={list.items.length > 0}
+            checkedItems={list.items.filter((i) => i.checked).length > 0}
+            workspaceId={list.workspaceId}
+            currentUserIsOwner={user?.sub === list.workspace.ownerId}
+          />
+        </div>
       </div>
       <div className={"mt-4"} ref={ref}>
         <UnifiedList
