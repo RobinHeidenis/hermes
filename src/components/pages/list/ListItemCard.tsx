@@ -21,7 +21,7 @@ export const ListItemCard = ({
   sortable?: boolean;
   showLinkSpace?: boolean;
   forceUpdate: () => void;
-  handleProps: DraggableProvidedDragHandleProps | null | undefined;
+  handleProps?: DraggableProvidedDragHandleProps | null | undefined;
 }) => {
   const formatter = new Intl.NumberFormat(undefined, {
     currency: "EUR",
