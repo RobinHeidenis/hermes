@@ -1,12 +1,11 @@
 import { Button, Image, Loader, Text, Title } from "@mantine/core";
 import { ArrowDownWideNarrowIcon, CheckIcon } from "lucide-react";
-import { SortableList } from "~/components/pages/list/SortableList";
-import { List } from "~/components/pages/list/List";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import { useForceUpdate } from "@mantine/hooks";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { UnifiedList } from "~/components/pages/list/UnifiedList";
 
 export const ListPageContent = ({
   list,
@@ -23,7 +22,7 @@ export const ListPageContent = ({
   });
   const [updateAmount, setUpdateAmount] = useState(0);
   const forceUpdate = useForceUpdate();
-  const [ref, setEnabled] = useAutoAnimate();
+  const [ref] = useAutoAnimate();
 
   return (
     <div>
@@ -46,20 +45,15 @@ export const ListPageContent = ({
             )
           }
           onClick={async () => {
-            if (isReordering) {
-              setEnabled(true);
-              if (updateAmount > 0) {
-                await mutateAsync({
-                  listId: list.id,
-                  items: list.items.map(({ id }, index) => ({
-                    id,
-                    position: index,
-                  })),
-                });
-                setUpdateAmount(0);
-              }
-            } else {
-              setEnabled(true);
+            if (isReordering && updateAmount > 0) {
+              await mutateAsync({
+                listId: list.id,
+                items: list.items.map(({ id }, index) => ({
+                  id,
+                  position: index,
+                })),
+              });
+              setUpdateAmount(0);
             }
             setIsReordering(!isReordering);
           }}
@@ -68,17 +62,14 @@ export const ListPageContent = ({
         </Button>
       </div>
       <div className={"mt-4"} ref={ref}>
-        {isReordering ? (
-          <SortableList
-            items={list.items}
-            listId={list.id}
-            updateAmount={updateAmount}
-            setUpdateAmount={setUpdateAmount}
-            forceUpdate={forceUpdate}
-          />
-        ) : (
-          <List items={list.items} listId={list.id} forceUpdate={forceUpdate} />
-        )}
+        <UnifiedList
+          items={list.items}
+          listId={list.id}
+          updateAmount={updateAmount}
+          setUpdateAmount={setUpdateAmount}
+          forceUpdate={forceUpdate}
+          isReordering={isReordering}
+        />
       </div>
       {list.items.length === 0 && (
         <div className={"mt-10 flex flex-col items-center"}>

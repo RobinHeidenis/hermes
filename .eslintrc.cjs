@@ -27,6 +27,10 @@ const config = {
     "@typescript-eslint/no-misused-promises": [
       "error",
       {"checksVoidReturn": {"attributes": false}}
+    ],
+    "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {"paths": ["@mantine/core/lib"]}
     ]
   },
 };
