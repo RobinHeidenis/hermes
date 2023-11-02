@@ -30,7 +30,7 @@ const WorkspaceSettingsModal = ({ workspaceId }: { workspaceId: string }) => {
   const { user } = useUser();
   const { data } = api.workspace.getWorkspace.useQuery({ workspaceId });
   const workspace = data!;
-  const currentUserIsOwner = user?.id === workspace.users.owner.id;
+  const currentUserIsOwner = user?.sub === workspace.users.owner.id;
 
   return (
     <div className={"flex flex-col"}>
@@ -158,7 +158,7 @@ const ListUsersSection = ({
   workspaceId: string;
 }) => {
   const { user } = useUser();
-  const userId = user?.id;
+  const userId = user?.sub;
 
   return (
     <>
