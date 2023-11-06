@@ -37,7 +37,7 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
   const { white } = useMantineTheme();
   const { pathname } = useRouter();
   const { data: defaultWorkspace, isFetched } =
-    api.user.getDefaultWorkspace.useQuery();
+    api.user.getDefaultWorkspace.useQuery(undefined, { enabled: !!user });
 
   return (
     <AppShell header={{ height: 60 }} padding="md">

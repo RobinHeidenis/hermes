@@ -12,7 +12,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: text("id").notNull().primaryKey(),
@@ -53,6 +53,24 @@ export const workspacesRelations = relations(workspaces, ({ many, one }) => ({
   defaultList: one(lists, {
     fields: [workspaces.defaultListId],
     references: [lists.id],
+  }),
+}));
+
+export const invites = pgTable("invites", {
+  id: text("id")
+    .primaryKey()
+    .default(sql`substr(md5(random()::text), 0, 6)`),
+  workspaceId: uuid("workspace_id")
+    .notNull()
+    .unique()
+    .references(() => workspaces.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const invitesRelations = relations(invites, ({ one }) => ({
+  workspace: one(workspaces, {
+    fields: [invites.workspaceId],
+    references: [workspaces.id],
   }),
 }));
 
