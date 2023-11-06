@@ -38,7 +38,9 @@ export const WorkspaceDetailPage = withPageAuthRequired(() => {
   if (isLoading || !workspace) {
     return (
       <CustomAppShell>
-        <LoadingOverlay visible />
+        <div className={"relative"}>
+          <LoadingOverlay visible />
+        </div>
       </CustomAppShell>
     );
   }

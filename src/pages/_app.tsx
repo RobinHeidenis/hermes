@@ -9,6 +9,7 @@ import { createTheme, MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
+import { Notifications } from "@mantine/notifications";
 
 const theme = createTheme({
   breakpoints: {
@@ -25,6 +26,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <UserProvider>
       <MantineProvider theme={theme} defaultColorScheme={"dark"}>
+        <Notifications />
         <ModalsProvider>
           <Component {...pageProps} />
           <ReactQueryDevtools initialIsOpen={false} />

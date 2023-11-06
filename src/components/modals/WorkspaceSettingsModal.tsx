@@ -5,8 +5,12 @@ import {
   Badge,
   Button,
   Card,
+  CopyButton,
   Loader,
+  LoadingOverlay,
   Select,
+  Skeleton,
+  Table,
   Text,
   TextInput,
   Title,
@@ -14,10 +18,12 @@ import {
 } from "@mantine/core";
 import {
   CheckIcon,
+  ClipboardEditIcon,
   LogOutIcon,
+  PlusIcon,
+  RefreshCcwIcon,
   Trash2Icon,
   UserMinusIcon,
-  UserPlusIcon,
 } from "lucide-react";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
@@ -28,8 +34,15 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 
 const WorkspaceSettingsModal = ({ workspaceId }: { workspaceId: string }) => {
   const { user } = useUser();
-  const { data } = api.workspace.getWorkspace.useQuery({ workspaceId });
-  const workspace = data!;
+  const { data: workspace } = api.workspace.getWorkspace.useQuery({
+    workspaceId,
+  });
+  if (!workspace)
+    return (
+      <div className={"relative h-96"}>
+        <LoadingOverlay visible />
+      </div>
+    );
   const currentUserIsOwner = user?.sub === workspace.users.owner.id;
 
   return (
@@ -47,6 +60,7 @@ const WorkspaceSettingsModal = ({ workspaceId }: { workspaceId: string }) => {
         currentUserIsOwner={currentUserIsOwner}
         workspaceId={workspace.id}
       />
+      <WorkspaceInvitesSection workspaceId={workspace.id} />
       <DangerZoneSection
         workspaceId={workspace.id}
         currentUserIsOwner={currentUserIsOwner}
@@ -179,16 +193,6 @@ const ListUsersSection = ({
           workspaceId={workspaceId}
         />
       ))}
-      {currentUserIsOwner && (
-        <Button
-          variant={"light"}
-          leftSection={<UserPlusIcon className={"h-5 w-5"} />}
-          disabled
-          className={"mt-2"}
-        >
-          Invite user
-        </Button>
-      )}
     </>
   );
 };
@@ -296,6 +300,176 @@ const ListUserCard = ({
         )}
       </div>
     </Card>
+  );
+};
+
+const InviteRow = ({
+  invite,
+  workspaceId,
+}: {
+  invite: NonNullable<RouterOutputs["invite"]["getInviteForWorkspace"]>;
+  workspaceId: string;
+}) => {
+  const utils = api.useUtils();
+  const { mutate, isLoading } = api.invite.deleteInvite.useMutation({
+    onSuccess: () =>
+      utils.invite.getInviteForWorkspace.invalidate({
+        workspaceId,
+      }),
+  });
+
+  return (
+    <Table.Tr key={invite.id}>
+      <Table.Td>{invite.id}</Table.Td>
+      <Table.Td>{invite.createdAt?.toLocaleString()}</Table.Td>
+      <Table.Td className={"text-end"}>
+        <CopyButton value={`${window.location.origin}/invite/${invite.id}`}>
+          {({ copied, copy }) => (
+            <ActionIcon
+              onClick={copy}
+              variant={"light"}
+              color={copied ? "teal" : "blue"}
+            >
+              {copied ? (
+                <CheckIcon className={"h-4 w-4"} />
+              ) : (
+                <ClipboardEditIcon className={"h-4 w-4"} />
+              )}
+            </ActionIcon>
+          )}
+        </CopyButton>
+        <ActionIcon
+          onClick={() => {
+            modals.openConfirmModal({
+              title: "Delete invite?",
+              children:
+                "Are you sure you want to delete this invite? Anyone that has this link will not be able to join your workspace!",
+              confirmProps: {
+                color: "red",
+                leftSection: <Trash2Icon className={"h-4 w-4"} />,
+              },
+              labels: { confirm: "Delete", cancel: "Cancel" },
+              onConfirm: () => mutate({ inviteId: invite.id }),
+            });
+          }}
+          variant={"light"}
+          className={"ml-3"}
+          color={"red"}
+        >
+          {isLoading ? (
+            <Loader color={"white"} size={"xs"} />
+          ) : (
+            <Trash2Icon className={"h-4 w-4"} />
+          )}
+        </ActionIcon>
+      </Table.Td>
+    </Table.Tr>
+  );
+};
+
+export const WorkspaceInvitesSection = ({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) => {
+  const utils = api.useUtils();
+  const { data, isLoading } = api.invite.getInviteForWorkspace.useQuery({
+    workspaceId,
+  });
+  const { mutate, isLoading: isCreateInviteLoading } =
+    api.invite.createInvite.useMutation({
+      onSuccess: () =>
+        utils.invite.getInviteForWorkspace.invalidate({ workspaceId }),
+    });
+  const { mutate: regenerateInvite } = api.invite.regenerateInvite.useMutation({
+    onSuccess: () =>
+      utils.invite.getInviteForWorkspace.invalidate({ workspaceId }),
+  });
+
+  return (
+    <>
+      <Title order={5} className={"mt-5"}>
+        Invite
+      </Title>
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th className={"w-16"}>Code</Table.Th>
+            <Table.Th>Created at</Table.Th>
+            <Table.Th className={"text-end"}>Actions</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {isLoading ? (
+            <Table.Tr>
+              <Table.Td colSpan={3}>
+                <Skeleton className={"h-7 w-full"} />
+              </Table.Td>
+            </Table.Tr>
+          ) : !data ? (
+            <Table.Tr>
+              <Table.Td colSpan={3}>
+                <Text>This workspace has no invites</Text>
+              </Table.Td>
+            </Table.Tr>
+          ) : (
+            <InviteRow invite={data} workspaceId={workspaceId} />
+          )}
+        </Table.Tbody>
+      </Table>
+      {!data ? (
+        <Button
+          variant={"light"}
+          leftSection={
+            isCreateInviteLoading ? (
+              <Loader color={"white"} size={"xs"} />
+            ) : (
+              <PlusIcon className={"h-5 w-5"} />
+            )
+          }
+          onClick={() => {
+            modals.openConfirmModal({
+              title: "Create a new invite?",
+              labels: {
+                confirm: "Create",
+                cancel: "Cancel",
+              },
+              confirmProps: {
+                leftSection: <PlusIcon className={"h-5 w-5"} />,
+              },
+              onConfirm: () => mutate({ workspaceId }),
+            });
+          }}
+          className={"mt-2"}
+        >
+          Create an invite
+        </Button>
+      ) : (
+        <Button
+          variant={"light"}
+          color={"orange"}
+          leftSection={<RefreshCcwIcon className={"h-5 w-5"} />}
+          onClick={() =>
+            modals.openConfirmModal({
+              title: "Refresh invite?",
+              children:
+                "Are you sure you want to refresh this invite? Anyone with the old link cannot join your workspace anymore!",
+              labels: {
+                confirm: "Refresh",
+                cancel: "Cancel",
+              },
+              confirmProps: {
+                leftSection: <RefreshCcwIcon className={"h-5 w-5"} />,
+                color: "orange",
+              },
+              onConfirm: () => regenerateInvite({ inviteId: data.id }),
+            })
+          }
+        >
+          Refresh invite
+        </Button>
+      )}
+    </>
   );
 };
 
