@@ -3,6 +3,7 @@ import { ListItemCard } from "~/components/pages/list/ListItemCard";
 import type { ListItemProps } from "~/components/pages/list/UnifiedList";
 import { RightActions } from "~/components/pages/list/swipeable/RightActions";
 import { LeftActions } from "~/components/pages/list/swipeable/LeftActions";
+import { useLocalStorage } from "@mantine/hooks";
 
 export const SwipeableListItem = ({
   item,
@@ -12,6 +13,10 @@ export const SwipeableListItem = ({
   disableSwipe,
 }: ListItemProps) => {
   const { id: itemId, checked } = item;
+  const [hasCheckedItems] = useLocalStorage({
+    key: "hasCheckedItems",
+    defaultValue: false,
+  });
 
   return (
     <ReactSwipeableListItem
@@ -34,6 +39,7 @@ export const SwipeableListItem = ({
         forceUpdate={forceUpdate}
         itemChecked={checked ?? false}
         showLinkSpace={showLinkSpace}
+        showAnimation={!hasCheckedItems}
       />
     </ReactSwipeableListItem>
   );

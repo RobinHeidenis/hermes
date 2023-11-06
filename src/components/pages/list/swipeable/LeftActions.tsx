@@ -1,6 +1,7 @@
 import { api } from "~/utils/api";
 import { LeadingActions, SwipeAction } from "react-swipeable-list";
 import { CheckIcon, UndoIcon } from "lucide-react";
+import { useLocalStorage } from "@mantine/hooks";
 
 export const LeftActions = ({
   itemChecked,
@@ -12,9 +13,14 @@ export const LeftActions = ({
   listId: string;
 }) => {
   const utils = api.useUtils();
+  const [, setHasCheckedItems] = useLocalStorage({
+    key: "hasCheckedItems",
+    defaultValue: false,
+  });
 
   const { mutate: setItemChecked } = api.item.setItemChecked.useMutation({
     onMutate: async (checkedItem) => {
+      setHasCheckedItems(true);
       await utils.list.getList.cancel({ listId });
       const previousList = utils.list.getList.getData({ listId });
       utils.list.getList.setData({ listId }, (data) => {

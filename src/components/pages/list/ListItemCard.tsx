@@ -14,6 +14,7 @@ export const ListItemCard = ({
   showLinkSpace,
   forceUpdate,
   handleProps,
+  showAnimation,
 }: {
   itemChecked?: boolean;
   item: ListItem;
@@ -22,6 +23,7 @@ export const ListItemCard = ({
   showLinkSpace?: boolean;
   forceUpdate: () => void;
   handleProps?: DraggableProvidedDragHandleProps | null | undefined;
+  showAnimation?: boolean;
 }) => {
   const formatter = new Intl.NumberFormat(undefined, {
     currency: "EUR",
@@ -31,7 +33,9 @@ export const ListItemCard = ({
 
   return (
     <Card
-      className={"flex w-full flex-row justify-between"}
+      className={`${
+        showAnimation && "slide-animation"
+      } flex w-full flex-row justify-between`}
       bg={isTempItem ? "dark.4" : itemChecked ? "dark.8" : "dark.6"}
     >
       <div className={"flex flex-row items-center"}>
