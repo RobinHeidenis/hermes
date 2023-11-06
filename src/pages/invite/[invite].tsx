@@ -13,6 +13,7 @@ import {
   Text,
   ThemeIcon,
   Title,
+  Tooltip,
 } from "@mantine/core";
 import { api } from "~/utils/api";
 import { notifications } from "@mantine/notifications";
@@ -141,8 +142,13 @@ const InvitePage = () => {
                         {data.workspace.name}
                       </Title>
                       <div className={"mt-2 flex flex-row items-center"}>
-                        <Text>Collaborators:</Text>
-                        <AvatarGroup className={"ml-2"}>
+                        <Text className={"mr-2"}>Collaborators:</Text>
+                        {data.workspace.usersToWorkspaces.length === 0 && (
+                          <Tooltip label={"You'll be the first!"}>
+                            <Text fw={700}>none</Text>
+                          </Tooltip>
+                        )}
+                        <AvatarGroup>
                           {data.workspace.usersToWorkspaces.length > 3 ? (
                             <>
                               {data.workspace.usersToWorkspaces
