@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { listSettingSchema } from "~/schemas/listSettings";
 import { deleteWorkspaceSchema } from "~/schemas/deleteWorkspace";
 import { z } from "zod";
+import { workspaceIdSchema } from "~/schemas/workspaceId";
 
 export const workspaceRouter = createTRPCRouter({
   getWorkspaces: protectedProcedure.query(async ({ ctx }) => {
@@ -340,5 +341,52 @@ export const workspaceRouter = createTRPCRouter({
             eq(usersToWorkspaces.workspaceId, input.workspaceId),
           ),
         );
+    }),
+  getLoyaltyCards: protectedProcedure
+    .input(workspaceIdSchema)
+    .query(async ({ ctx, input }) => {
+      const workspace = await ctx.db.query.workspaces.findFirst({
+        where: eq(workspaces.id, input.workspaceId),
+        columns: {
+          id: true,
+          ownerId: true,
+        },
+        with: {
+          usersToWorkspaces: {
+            columns: {
+              userId: true,
+            },
+          },
+          loyaltyCards: {
+            columns: {
+              id: true,
+              name: true,
+              store: true,
+              barcode: true,
+            },
+          },
+        },
+      });
+
+      if (!workspace)
+        throw new TRPCError({
+          message:
+            "The workspace you're trying to get loyalty cards from was not found",
+          code: "NOT_FOUND",
+        });
+
+      if (
+        workspace.ownerId !== ctx.session.user.id &&
+        !workspace.usersToWorkspaces.find(
+          (r) => r.userId === ctx.session.user.id,
+        )
+      )
+        throw new TRPCError({
+          message:
+            "You're not allowed to get loyalty cards from this workspace",
+          code: "UNAUTHORIZED",
+        });
+
+      return workspace.loyaltyCards;
     }),
 });

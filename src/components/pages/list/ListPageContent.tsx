@@ -9,20 +9,22 @@ import {
   Title,
 } from "@mantine/core";
 import {
-  ArrowDownWideNarrowIcon,
   CheckIcon,
+  CreditCardIcon,
   MoreVerticalIcon,
   PencilIcon,
 } from "lucide-react";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForceUpdate } from "@mantine/hooks";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { UnifiedList } from "~/components/pages/list/UnifiedList";
 import { ListMenu } from "~/components/pages/list/ListMenu";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useRouter } from "next/router";
+import { openLoyaltyCardModal } from "~/components/modals/LoyaltyCardModal";
+import { modals } from "@mantine/modals";
 
 export const ListPageContent = ({
   list,
@@ -33,7 +35,7 @@ export const ListPageContent = ({
   isReordering: boolean;
   setIsReordering: (isReordering: boolean) => void;
 }) => {
-  const { query } = useRouter();
+  const router = useRouter();
   const utils = api.useUtils();
   const { user } = useUser();
 
@@ -43,14 +45,34 @@ export const ListPageContent = ({
 
   const { mutateAsync, isLoading } = api.list.updatePositions.useMutation({
     onSettled: () =>
-      utils.list.getList.invalidate({ listId: query.list as string }),
+      utils.list.getList.invalidate({ listId: router.query.list as string }),
   });
 
   const basicListData =
     utils.workspace.getWorkspace
-      .getData({ workspaceId: query.workspace as string })
-      ?.lists.filter((l) => l.id === query.list)[0] ?? undefined;
-  const listId = list?.id ?? basicListData?.id ?? (query.list as string);
+      .getData({ workspaceId: router.query.workspace as string })
+      ?.lists.filter((l) => l.id === router.query.list)[0] ?? undefined;
+  const listId = list?.id ?? basicListData?.id ?? (router.query.list as string);
+
+  useEffect(() => {
+    const hash = router.asPath.split("#")[1];
+    if (hash === "loyaltyCard") {
+      if (!list ?? !list?.defaultLoyaltyCard) return;
+      openLoyaltyCardModal({
+        card: list.defaultLoyaltyCard,
+        workspaceId: list.workspaceId,
+        onClose: () => {
+          void router.push(
+            router.asPath.split("#")[0] ?? router.basePath,
+            undefined,
+            { shallow: true },
+          );
+        },
+      });
+    } else if (hash === undefined) {
+      modals.closeAll();
+    }
+  }, [router.asPath, list, router]);
 
   return (
     <div>
@@ -75,37 +97,49 @@ export const ListPageContent = ({
           </Title>
         </div>
         <div className={"flex"}>
-          <Button
-            variant={"light"}
-            leftSection={
-              isReordering ? (
+          {isReordering ? (
+            <Button
+              variant={"light"}
+              leftSection={
                 isLoading ? (
                   <Loader color={"blue"} size={"xs"} />
                 ) : (
                   <CheckIcon />
                 )
-              ) : (
-                <ArrowDownWideNarrowIcon />
-              )
-            }
-            disabled={!list}
-            onClick={async () => {
-              if (isReordering && updateAmount > 0) {
-                await mutateAsync({
-                  listId: listId,
-                  items:
-                    list?.items.map(({ id }, index) => ({
-                      id,
-                      position: index,
-                    })) ?? [],
-                });
-                setUpdateAmount(0);
               }
-              setIsReordering(!isReordering);
-            }}
-          >
-            {isReordering ? "Done" : "Reorder"}
-          </Button>
+              onClick={async () => {
+                if (updateAmount > 0) {
+                  await mutateAsync({
+                    listId: listId,
+                    items:
+                      list?.items.map(({ id }, index) => ({
+                        id,
+                        position: index,
+                      })) ?? [],
+                  });
+                  setUpdateAmount(0);
+                }
+                setIsReordering(!isReordering);
+              }}
+            >
+              Done
+            </Button>
+          ) : (
+            list?.defaultLoyaltyCard && (
+              <Button
+                variant={"light"}
+                color={"green"}
+                leftSection={<CreditCardIcon className={"h-4 w-4"} />}
+                onClick={() =>
+                  router.push({
+                    hash: "loyaltyCard",
+                  })
+                }
+              >
+                Store card
+              </Button>
+            )
+          )}
           {list ? (
             <ListMenu
               listId={list.id}
@@ -113,6 +147,7 @@ export const ListPageContent = ({
               checkedItems={list.items.filter((i) => i.checked).length > 0}
               workspaceId={list.workspaceId}
               currentUserIsOwner={user?.sub === list.workspace.ownerId}
+              setIsReordering={setIsReordering}
             />
           ) : (
             <ActionIcon

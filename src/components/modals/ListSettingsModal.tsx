@@ -1,9 +1,20 @@
 import { modals } from "@mantine/modals";
-import { Button, Loader, Text, TextInput, Title } from "@mantine/core";
+import {
+  Button,
+  CloseButton,
+  Combobox,
+  Input,
+  InputBase,
+  Loader,
+  Text,
+  TextInput,
+  Title,
+  useCombobox,
+} from "@mantine/core";
 import { api } from "~/utils/api";
 import { useForm, zodResolver } from "@mantine/form";
 import { updateListSchema } from "~/schemas/updateList";
-import { CheckIcon, Trash2Icon } from "lucide-react";
+import { CheckIcon, StoreIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/router";
 
 const ListSettingsModal = ({
@@ -15,6 +26,9 @@ const ListSettingsModal = ({
 }) => {
   const router = useRouter();
   const { data } = api.list.getList.useQuery({ listId });
+  const { data: loyaltyCards } = api.workspace.getLoyaltyCards.useQuery({
+    workspaceId,
+  });
   const utils = api.useUtils();
   const form = useForm({
     initialValues: {
@@ -63,6 +77,13 @@ const ListSettingsModal = ({
       onSuccess: () => router.push(`/workspace/${workspaceId}`),
       onSettled: () => utils.list.getList.invalidate({ listId }),
     });
+  const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+  });
+
+  const selectedOption = loyaltyCards?.find(
+    ({ id }) => id === form.values.defaultLoyaltyCardId,
+  );
 
   return (
     <div className={"flex flex-col"}>
@@ -77,9 +98,62 @@ const ListSettingsModal = ({
           placeholder={"List name"}
           {...form.getInputProps("name")}
         />
-        {/* TODO: Add custom select for default loyalty card */}
-        {/* Needs both the store and the name */}
-        {/* And then add a card icon to the list screen, when clicking on it open the loyalty card modal with that card */}
+        <Combobox
+          store={combobox}
+          withinPortal={false}
+          onOptionSubmit={(val) => {
+            form.setFieldValue("defaultLoyaltyCardId", val);
+            combobox.closeDropdown();
+          }}
+        >
+          <Combobox.Target>
+            <InputBase
+              label={"Default loyalty card"}
+              component={"button"}
+              type={"button"}
+              className={"mt-3"}
+              pointer
+              rightSection={
+                form.values.defaultLoyaltyCardId !== null ? (
+                  <CloseButton
+                    size="sm"
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() =>
+                      form.setFieldValue("defaultLoyaltyCardId", null)
+                    }
+                    aria-label="Clear value"
+                  />
+                ) : (
+                  <Combobox.Chevron />
+                )
+              }
+              onClick={() => combobox.toggleDropdown()}
+              multiline
+            >
+              {selectedOption ? (
+                <SelectOption
+                  name={selectedOption.name}
+                  store={selectedOption.store}
+                />
+              ) : (
+                <Input.Placeholder>None</Input.Placeholder>
+              )}
+            </InputBase>
+          </Combobox.Target>
+
+          <Combobox.Dropdown>
+            <Combobox.Options>
+              {loyaltyCards?.map((loyaltyCard) => (
+                <Combobox.Option value={loyaltyCard.id} key={loyaltyCard.id}>
+                  <SelectOption
+                    name={loyaltyCard.name}
+                    store={loyaltyCard.store}
+                  />
+                </Combobox.Option>
+              ))}
+            </Combobox.Options>
+          </Combobox.Dropdown>
+        </Combobox>
         <Button
           type={"submit"}
           leftSection={
@@ -161,3 +235,17 @@ export const openListSettingsModal = ({
     title: "List settings",
     children: <ListSettingsModal listId={listId} workspaceId={workspaceId} />,
   });
+
+const SelectOption = ({ name, store }: { name: string; store: string }) => {
+  return (
+    <div className={"flex flex-col"}>
+      <Text className={"flex flex-row items-center"}>
+        <StoreIcon className={"mr-2 h-4 w-4"} />
+        {store}
+      </Text>
+      <Text c={"dimmed"} size={"sm"}>
+        {name}
+      </Text>
+    </div>
+  );
+};
