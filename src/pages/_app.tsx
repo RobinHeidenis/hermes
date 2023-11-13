@@ -10,6 +10,9 @@ import { ModalsProvider } from "@mantine/modals";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import { Notifications } from "@mantine/notifications";
+// @ts-expect-error Types are broken but this works don't worry about it
+import { useNextRouterViewTransitions } from "use-view-transitions/next";
+import { useRouter } from "next/router";
 
 const theme = createTheme({
   breakpoints: {
@@ -23,6 +26,11 @@ const theme = createTheme({
 });
 
 const MyApp: AppType = ({ Component, pageProps }) => {
+  const router = useRouter();
+  // Don't worry about it, this works trust me
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  useNextRouterViewTransitions(router);
+
   return (
     <UserProvider>
       <MantineProvider theme={theme} defaultColorScheme={"dark"}>

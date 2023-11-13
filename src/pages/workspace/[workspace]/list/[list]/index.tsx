@@ -1,5 +1,5 @@
 import { CustomAppShell } from "~/components/appshell/CustomAppShell";
-import { ActionIcon, Skeleton } from "@mantine/core";
+import { ActionIcon } from "@mantine/core";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import "react-swipeable-list/dist/styles.css";
@@ -12,7 +12,7 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 export const ListPage = withPageAuthRequired(() => {
   const { query } = useRouter();
   const [isReordering, setIsReordering] = useState(false);
-  const { data: list, isLoading } = api.list.getList.useQuery(
+  const { data: list } = api.list.getList.useQuery(
     { listId: query.list as string },
     { enabled: !!query.list && !isReordering },
   );
@@ -26,15 +26,11 @@ export const ListPage = withPageAuthRequired(() => {
           }
         >
           <div className={"w-full sm:w-2/3 md:w-1/2 3xl:w-1/4"}>
-            {isLoading || !list ? (
-              <Skeleton className={"mt-2 h-8 w-44"} />
-            ) : (
-              <ListPageContent
-                list={list}
-                isReordering={isReordering}
-                setIsReordering={setIsReordering}
-              />
-            )}
+            <ListPageContent
+              list={list}
+              isReordering={isReordering}
+              setIsReordering={setIsReordering}
+            />
           </div>
         </div>
       </CustomAppShell>

@@ -4,6 +4,7 @@ import { userRouter } from "~/server/api/routers/user";
 import { listRouter } from "~/server/api/routers/list";
 import { itemRouter } from "~/server/api/routers/item";
 import { inviteRouter } from "~/server/api/routers/invite";
+import { loyaltyCardRouter } from "./routers/loyaltyCard";
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   list: listRouter,
   item: itemRouter,
   invite: inviteRouter,
+  loyaltyCard: loyaltyCardRouter,
 });
 
 // export type definition of API

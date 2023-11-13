@@ -16,7 +16,9 @@ export const WorkspaceIndex = withPageAuthRequired(() => {
       <div className={"flex items-center justify-between"}>
         <div>
           <Text c={"dimmed"}>Overview</Text>
-          <Title>Workspaces</Title>
+          <Title style={{ viewTransitionName: `workspace-header` }}>
+            Workspaces
+          </Title>
         </div>
         <Button
           variant={"light"}
