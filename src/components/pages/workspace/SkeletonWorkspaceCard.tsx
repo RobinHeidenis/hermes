@@ -7,7 +7,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
-import { ListIcon, UserIcon } from "lucide-react";
+import { ListIcon, ListTodoIcon, UserIcon } from "lucide-react";
 
 export const SkeletonWorkspaceCard = () => {
   const { colors } = useMantineTheme();
@@ -30,7 +30,7 @@ export const SkeletonWorkspaceCard = () => {
     >
       <div className={"flex h-auto items-start justify-start"}>
         <ThemeIcon className={`mr-4 p-3`} size={"xl"} color={colors.dark[7]}>
-          <Skeleton className={"h-6 w-6"} />
+          <ListTodoIcon size={30} />
         </ThemeIcon>
         <div>
           <Skeleton>
@@ -44,16 +44,14 @@ export const SkeletonWorkspaceCard = () => {
       <div className={"flex"}>
         <div className={"flex items-center"}>
           <UserIcon className={"mr-1 h-5 w-5"} />
-          <Skeleton className={"mr-1 h-4 w-5"} />
-          <Text>users</Text>
+          <Skeleton className={"mr-1 h-4 w-16"} />
         </div>
         <Text className={"ml-2 mr-2"} span>
           •
         </Text>
         <div className={"flex items-center"}>
           <ListIcon className={"mr-1 h-5 w-5"} />
-          <Skeleton className={"mr-1 h-4 w-5"} />
-          <Text>lists</Text>
+          <Skeleton className={"mr-1 h-4 w-16"} />
         </div>
       </div>
     </Card>

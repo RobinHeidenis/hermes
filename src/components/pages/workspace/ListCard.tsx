@@ -39,6 +39,9 @@ export const ListCard: FC<ListCardProps> = ({ id, name, items }) => {
         <div>
           <Title
             order={4}
+            style={{
+              viewTransitionName: `list-title-${id}`,
+            }}
             className={"line-clamp-3 text-ellipsis [overflow-wrap:anywhere]"}
           >
             {name}

@@ -121,6 +121,14 @@ export const workspaceRouter = createTRPCRouter({
               },
             },
           },
+          loyaltyCards: {
+            columns: {
+              id: true,
+              name: true,
+              store: true,
+              barcode: true,
+            },
+          },
         },
       });
 
@@ -150,6 +158,7 @@ export const workspaceRouter = createTRPCRouter({
           contributors: workspace.usersToWorkspaces.map((r) => r.user),
         },
         lists: workspace.lists,
+        loyaltyCards: workspace.loyaltyCards,
       };
     }),
   updateListSettings: protectedProcedure

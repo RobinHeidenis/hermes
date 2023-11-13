@@ -19,6 +19,7 @@ const ListSettingsModal = ({
   const form = useForm({
     initialValues: {
       name: data!.name!,
+      defaultLoyaltyCardId: data?.defaultLoyaltyCard?.id ?? null,
       listId,
     },
     validate: zodResolver(updateListSchema),
@@ -39,6 +40,7 @@ const ListSettingsModal = ({
       onSuccess: (_data, variables) => {
         form.setInitialValues({
           listId: variables.listId,
+          defaultLoyaltyCardId: variables.defaultLoyaltyCardId,
           name: variables.name,
         });
       },
@@ -75,6 +77,9 @@ const ListSettingsModal = ({
           placeholder={"List name"}
           {...form.getInputProps("name")}
         />
+        {/* TODO: Add custom select for default loyalty card */}
+        {/* Needs both the store and the name */}
+        {/* And then add a card icon to the list screen, when clicking on it open the loyalty card modal with that card */}
         <Button
           type={"submit"}
           leftSection={

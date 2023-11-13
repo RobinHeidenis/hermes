@@ -35,6 +35,14 @@ export const listRouter = createTRPCRouter({
             },
             orderBy: [asc(items.position)],
           },
+          defaultLoyaltyCard: {
+            columns: {
+              id: true,
+              name: true,
+              barcode: true,
+              store: true,
+            },
+          },
         },
       });
 
@@ -217,7 +225,10 @@ export const listRouter = createTRPCRouter({
         with: {
           workspace: {
             columns: { ownerId: true },
-            with: { usersToWorkspaces: { columns: { userId: true } } },
+            with: {
+              usersToWorkspaces: { columns: { userId: true } },
+              loyaltyCards: { columns: { id: true } },
+            },
           },
         },
       });
@@ -239,9 +250,24 @@ export const listRouter = createTRPCRouter({
           message: "You do not have access to update this list",
         });
 
+      if (
+        input.defaultLoyaltyCardId &&
+        !list.workspace.loyaltyCards.find(
+          (c) => c.id === input.defaultLoyaltyCardId,
+        )
+      )
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message:
+            "The loyalty card you're trying to set as default was not found",
+        });
+
       return ctx.db
         .update(lists)
-        .set({ name: input.name })
+        .set({
+          name: input.name,
+          defaultLoyaltyCardId: input.defaultLoyaltyCardId,
+        })
         .where(eq(lists.id, input.listId));
     }),
 });

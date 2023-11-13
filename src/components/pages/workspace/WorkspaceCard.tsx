@@ -41,7 +41,8 @@ export const WorkspaceCard: FC<WorkspaceCardProps> = ({
         <div>
           <Title
             order={4}
-            className={"line-clamp-3 text-ellipsis [overflow-wrap:anywhere]"}
+            style={{ viewTransitionName: `workspace-title-${id}` }}
+            className={`line-clamp-3 text-ellipsis [overflow-wrap:anywhere]`}
           >
             {name}
           </Title>
