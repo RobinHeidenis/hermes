@@ -102,7 +102,7 @@ export const openLoyaltyCardModal = ({
 }: {
   card: RouterOutputs["workspace"]["getWorkspace"]["loyaltyCards"][number];
   workspaceId: string;
-  onClose: () => void;
+  onClose?: () => void;
 }) => {
   const isMobile = matchMedia("(max-width: 50em)").matches;
 
@@ -114,6 +114,6 @@ export const openLoyaltyCardModal = ({
     fullScreen: isMobile,
     transitionProps: isMobile ? { transition: "slide-up" } : {},
     padding: "xl",
-    onClose: () => void onClose(),
+    onClose: onClose,
   });
 };
