@@ -1,5 +1,6 @@
 import { ActionIcon, Loader, Menu } from "@mantine/core";
 import {
+  ArrowDownWideNarrowIcon,
   CheckIcon,
   MoreVerticalIcon,
   SettingsIcon,
@@ -15,12 +16,14 @@ export const ListMenu = ({
   items,
   workspaceId,
   currentUserIsOwner,
+  setIsReordering,
 }: {
   listId: string;
   checkedItems: boolean;
   items: boolean;
   workspaceId: string;
   currentUserIsOwner: boolean;
+  setIsReordering: (isReordering: boolean) => void;
 }) => {
   const utils = api.useUtils();
   const { mutate: deleteCheckedItems, isLoading: isDeleteCheckedItemsLoading } =
@@ -60,8 +63,8 @@ export const ListMenu = ({
         <ActionIcon
           variant={"subtle"}
           color={"gray"}
-          size={"lg"}
           className={"ml-3"}
+          size={"lg"}
         >
           <MoreVerticalIcon className={"h-4 w-4"} />
         </ActionIcon>
@@ -80,6 +83,13 @@ export const ListMenu = ({
           </>
         )}
         <Menu.Label>Actions</Menu.Label>
+        <Menu.Item
+          leftSection={<ArrowDownWideNarrowIcon className={"h-4 w-4"} />}
+          onClick={() => setIsReordering(true)}
+          color={"blue"}
+        >
+          Reorder
+        </Menu.Item>
         <Menu.Item
           leftSection={
             isDeleteCheckedItemsLoading ? (
