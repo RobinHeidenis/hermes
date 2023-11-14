@@ -33,6 +33,7 @@
             <li><a href="#lists">Lists</a></li>
             <li><a href="#invites">Invites</a></li>
             <li><a href="#profile">Profile</a></li>
+            <li><a href="#view-transitions">View transitions</a></li>
           </ul>
         </li>
       </ol>
@@ -45,10 +46,12 @@ Hermes is a shopping list app that allows you to create different workspaces for
 create multiple lists inside these workspaces. This allows you to have a list for your weekly groceries, and a list for
 your monthly groceries, for example.
 
-It was created as a successor to my [other shopping list app](https://github.com/robinheidenis/shoppinglist), which in turn is a successor for the first ever real project I did together with my brother.
+It was created as a successor to my [other shopping list app](https://github.com/robinheidenis/shoppinglist), which in
+turn is a successor for the first ever real project I did together with my brother.
 
 My goal for the project is to create a fully functional, production-ready app that I can use in my daily life.
-I also wanted to focus on the UX of the app, which is why I spent a lot of time on user flows and little niceties within the app.
+I also wanted to focus on the UX of the app, which is why I spent a lot of time on user flows and little niceties within
+the app.
 
 ## Features
 
@@ -153,7 +156,8 @@ It also allows you to turn on Reordering mode.
 ![invite.png](screenshots/invite.png)
 
 Invites allow other users to join your workspace. The code / link can be found in the workspace settings modal.
-Users that click your link are treated with the above screen. Clicking `Accept invite` adds them to the workspace, and redirects them to the workspace overview.
+Users that click your link are treated with the above screen. Clicking `Accept invite` adds them to the workspace, and
+redirects them to the workspace overview.
 
 ### Profile
 
@@ -163,3 +167,13 @@ Finally, we have the profile page. This page shows your name, email, and profile
 It allows you to change your username (if you've logged in with Discord), and your email (if you signed up with
 email/password).
 Updating your profile here will also update it in Auth0.
+
+### View transitions
+
+![view-transitions.gif](screenshots/view-transitions.gif)
+
+Hermes uses a brand-new API called view transitions to make page transitions look better. It animates a fade from the
+previous page to the next page, and animates the movement of certain elements like the workspace title.
+
+> [!Note]
+> This currently only works in Google Chrome (and Chromium based browsers like Edge), and not in Firefox.

@@ -224,13 +224,14 @@ export const listRouter = createTRPCRouter({
         },
         with: {
           workspace: {
-            columns: { ownerId: true },
+            columns: { ownerId: true, id: true },
             with: {
               usersToWorkspaces: { columns: { userId: true } },
               loyaltyCards: { columns: { id: true } },
             },
           },
         },
+        where: eq(lists.id, input.listId),
       });
 
       if (!list)
