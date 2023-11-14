@@ -95,9 +95,6 @@ dependencies:
   superjson:
     specifier: ^2.2.0
     version: 2.2.0
-  use-view-transitions:
-    specifier: ^1.0.16
-    version: 1.0.16(react-dom@18.2.0)(react@18.2.0)
   zod:
     specifier: ^3.22.4
     version: 3.22.4
@@ -4280,16 +4277,6 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       react: 18.2.0
-    dev: false
-
-  /use-view-transitions@1.0.16(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-6suGH0QsKUCLXQqs9uRV6gL4TxNS3eTRT/uPpYQRZ7rh7sJw0ULm+8ZAJfUsaWRSKumKC4Yg6763do9m1MXI+w==}
-    peerDependencies:
-      react: ^18.2.0
-      react-dom: ^18.2.0
-    dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /util-deprecate@1.0.2:
