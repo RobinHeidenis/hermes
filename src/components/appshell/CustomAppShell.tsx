@@ -1,6 +1,7 @@
 import {
   AppShell,
   Avatar,
+  Image,
   Menu,
   Text,
   Title,
@@ -9,7 +10,6 @@ import {
 } from "@mantine/core";
 import { type PropsWithChildren } from "react";
 import {
-  ComponentIcon,
   LayoutDashboardIcon,
   LogOutIcon,
   SettingsIcon,
@@ -24,9 +24,13 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 const AppLogo = () => {
   return (
     <>
-      <Avatar radius={"xl"} className={"mr-2"}>
-        <ComponentIcon />
-      </Avatar>
+      <Image
+        src={"/logo.png"}
+        width={40}
+        height={40}
+        className={"mr-2 w-10"}
+        alt={"logo"}
+      />
       <Title>Hermes</Title>
     </>
   );

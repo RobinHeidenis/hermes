@@ -224,13 +224,14 @@ export const listRouter = createTRPCRouter({
         },
         with: {
           workspace: {
-            columns: { ownerId: true },
+            columns: { ownerId: true, id: true },
             with: {
               usersToWorkspaces: { columns: { userId: true } },
               loyaltyCards: { columns: { id: true } },
             },
           },
         },
+        where: eq(lists.id, input.listId),
       });
 
       if (!list)
@@ -250,6 +251,9 @@ export const listRouter = createTRPCRouter({
           message: "You do not have access to update this list",
         });
 
+      console.log(input.defaultLoyaltyCardId);
+      console.log(list.workspace.loyaltyCards);
+      console.log(list.workspace);
       if (
         input.defaultLoyaltyCardId &&
         !list.workspace.loyaltyCards.find(
