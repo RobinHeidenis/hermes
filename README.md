@@ -31,6 +31,7 @@
             <li><a href="#workspaces">Workspaces</a></li>
             <li><a href="#workspace-overview">Workspace overview</a></li>
             <li><a href="#lists">Lists</a></li>
+            <li><a href="#invites">Invites</a></li>
             <li><a href="#profile">Profile</a></li>
           </ul>
         </li>
