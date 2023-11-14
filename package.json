@@ -32,6 +32,7 @@
     "@trpc/next": "^10.42.0",
     "@trpc/react-query": "^10.42.0",
     "@trpc/server": "^10.42.0",
+    "@types/dom-view-transitions": "^1.0.4",
     "auth0": "^4.1.0",
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.28.6",
@@ -43,7 +44,6 @@
     "react-dom": "18.2.0",
     "react-swipeable-list": "^1.9.1",
     "superjson": "^2.2.0",
-    "use-view-transitions": "^1.0.16",
     "zod": "^3.22.4"
   },
   "devDependencies": {

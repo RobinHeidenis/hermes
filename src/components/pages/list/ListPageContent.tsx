@@ -62,16 +62,20 @@ export const ListPageContent = ({
         card: list.defaultLoyaltyCard,
         workspaceId: list.workspaceId,
         onClose: () => {
-          void router.push(
-            router.asPath.split("#")[0] ?? router.basePath,
+          void router.replace(
+            {
+              href: router.asPath.split("#")[0],
+              query: router.query,
+              hash: null,
+            },
             undefined,
             { shallow: true },
           );
         },
       });
-    } else if (hash === undefined) {
-      modals.closeAll();
+      return;
     }
+    modals.closeAll();
   }, [router.asPath, list, router]);
 
   return (

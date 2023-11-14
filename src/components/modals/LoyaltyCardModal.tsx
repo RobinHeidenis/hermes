@@ -115,5 +115,6 @@ export const openLoyaltyCardModal = ({
     transitionProps: isMobile ? { transition: "slide-up" } : {},
     padding: "xl",
     onClose: onClose,
+    style: { viewTransitionName: "none" },
   });
 };
