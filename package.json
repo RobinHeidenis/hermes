@@ -32,6 +32,7 @@
     "@trpc/next": "^10.42.0",
     "@trpc/react-query": "^10.42.0",
     "@trpc/server": "^10.42.0",
+    "@types/dom-view-transitions": "^1.0.4",
     "auth0": "^4.1.0",
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.28.6",
