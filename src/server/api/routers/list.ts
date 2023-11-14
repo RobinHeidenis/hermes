@@ -251,9 +251,6 @@ export const listRouter = createTRPCRouter({
           message: "You do not have access to update this list",
         });
 
-      console.log(input.defaultLoyaltyCardId);
-      console.log(list.workspace.loyaltyCards);
-      console.log(list.workspace);
       if (
         input.defaultLoyaltyCardId &&
         !list.workspace.loyaltyCards.find(
