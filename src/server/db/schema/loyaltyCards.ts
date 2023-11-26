@@ -1,4 +1,11 @@
-import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { workspaces } from "~/server/db/schema";
 import { relations } from "drizzle-orm";
 
@@ -10,6 +17,7 @@ export const loyaltyCards = pgTable("loyalty_cards", {
   name: varchar("name", { length: 25 }).default("Loyalty card").notNull(),
   store: varchar("store", { length: 40 }).notNull(),
   barcode: text("barcode").notNull(),
+  isQR: boolean("is_qr").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
