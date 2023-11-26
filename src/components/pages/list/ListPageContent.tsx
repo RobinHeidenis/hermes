@@ -61,6 +61,7 @@ export const ListPageContent = ({
       openLoyaltyCardModal({
         card: list.defaultLoyaltyCard,
         workspaceId: list.workspaceId,
+        hideButtons: true,
         onClose: () => {
           void router.replace(
             {

@@ -42,6 +42,7 @@
     "react": "18.2.0",
     "react-barcode": "^1.4.6",
     "react-dom": "18.2.0",
+    "react-qr-code": "^2.0.12",
     "react-swipeable-list": "^1.9.1",
     "superjson": "^2.2.0",
     "zod": "^3.22.4"

@@ -1,7 +1,7 @@
 import { api } from "~/utils/api";
 import { useForm, zodResolver } from "@mantine/form";
 import { modals } from "@mantine/modals";
-import { Button, Loader, TextInput } from "@mantine/core";
+import { Button, Checkbox, Loader, TextInput } from "@mantine/core";
 import { PlusIcon } from "lucide-react";
 import { createLoyaltyCardSchema } from "~/schemas/createLoyaltyCard";
 
@@ -12,6 +12,7 @@ const CreateLoyaltyCardModal = ({ workspaceId }: { workspaceId: string }) => {
       name: "Loyalty card",
       store: "",
       barcode: "",
+      isQR: false,
     },
     validate: zodResolver(createLoyaltyCardSchema),
   });
@@ -62,6 +63,14 @@ const CreateLoyaltyCardModal = ({ workspaceId }: { workspaceId: string }) => {
         placeholder={"0000000000000"}
         className={"mt-3"}
         {...form.getInputProps("barcode")}
+      />
+      <Checkbox
+        label={"QR Code"}
+        description={
+          "This loyalty card should be shown as a QR Code instead of a barcode"
+        }
+        className={"mt-5"}
+        {...form.getInputProps("isQR")}
       />
       <Button
         type={"submit"}

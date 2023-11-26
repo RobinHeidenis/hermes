@@ -42,6 +42,7 @@ export const loyaltyCardRouter = createTRPCRouter({
         name: input.name,
         workspaceId: input.workspaceId,
         barcode: input.barcode,
+        isQR: input.isQR,
         store: input.store,
       });
     }),
@@ -89,6 +90,7 @@ export const loyaltyCardRouter = createTRPCRouter({
         .set({
           name: input.name,
           barcode: input.barcode,
+          isQR: input.isQR,
           store: input.store,
         })
         .where(eq(loyaltyCards.id, input.loyaltyCardId));

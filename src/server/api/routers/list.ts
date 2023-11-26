@@ -40,6 +40,7 @@ export const listRouter = createTRPCRouter({
               id: true,
               name: true,
               barcode: true,
+              isQR: true,
               store: true,
             },
           },

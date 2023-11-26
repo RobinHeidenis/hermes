@@ -127,6 +127,7 @@ export const workspaceRouter = createTRPCRouter({
               id: true,
               name: true,
               store: true,
+              isQR: true,
               barcode: true,
             },
           },

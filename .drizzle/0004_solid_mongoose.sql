@@ -1,0 +1,1 @@
+ALTER TABLE "loyalty_cards" ADD COLUMN "is_qr" boolean DEFAULT false;

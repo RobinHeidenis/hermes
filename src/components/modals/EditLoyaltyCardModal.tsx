@@ -2,7 +2,7 @@ import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useForm, zodResolver } from "@mantine/form";
 import { modals } from "@mantine/modals";
-import { Button, Loader, TextInput } from "@mantine/core";
+import { Button, Checkbox, Loader, TextInput } from "@mantine/core";
 import { CheckIcon } from "lucide-react";
 import { editLoyaltyCardSchema } from "~/schemas/editLoyaltyCard";
 
@@ -20,9 +20,12 @@ const EditLoyaltyCardModal = ({
       name: card.name,
       store: card.store,
       barcode: card.barcode,
+      isQR: card.isQR ?? false,
     },
     validate: zodResolver(editLoyaltyCardSchema),
   });
+
+  console.log(card);
 
   const utils = api.useUtils();
 
@@ -42,6 +45,7 @@ const EditLoyaltyCardModal = ({
                 name: variables.name,
                 store: variables.store,
                 barcode: variables.barcode,
+                isQR: variables.isQR,
               };
             }
             return c;
@@ -80,6 +84,14 @@ const EditLoyaltyCardModal = ({
         placeholder={"0000000000000"}
         className={"mt-3"}
         {...form.getInputProps("barcode")}
+      />
+      <Checkbox
+        label={"QR Code"}
+        description={
+          "This loyalty card should be shown as a QR Code instead of a barcode"
+        }
+        className={"mt-5"}
+        {...form.getInputProps("isQR", { type: "checkbox" })}
       />
       <Button
         type={"submit"}
