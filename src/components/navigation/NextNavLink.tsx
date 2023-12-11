@@ -7,17 +7,17 @@ export const NextNavLink = ({
   label,
   leftSection,
   pathname,
+  className,
 }: {
   href: string;
   label: string;
   leftSection?: ReactNode;
   pathname?: string;
+  className?: string;
 }) => (
   <NavLink
     component={Link}
-    className={
-      "hover:bg-[--mantine-color-default-hover] hover:data-[active=true]:bg-[--nl-hover]"
-    }
+    className={`hover:bg-[--mantine-color-default-hover] hover:data-[active=true]:bg-[--nl-hover] ${className}`}
     href={href}
     label={label}
     leftSection={leftSection}

@@ -16,7 +16,7 @@ import { useNextRouterViewTransitions } from "~/hooks/useViewTransitions";
 const theme = createTheme({
   breakpoints: {
     sm: "40em",
-    md: "46em",
+    md: "47em",
     lg: "64em",
     xl: "80em",
     "2xl": "96em",

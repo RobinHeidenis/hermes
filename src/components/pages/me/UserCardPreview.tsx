@@ -12,7 +12,7 @@ export const UserCardPreview = ({ user }: { user: UserProfile }) => {
     <Card className={"mt-2"}>
       <Title order={5}>Collaborators in this list</Title>
       <AvatarGroup className={"mt-1"}>
-        <Popover opened withArrow position={"bottom-start"}>
+        <Popover opened withArrow position={"bottom-start"} zIndex={10}>
           <Popover.Target>
             <Avatar src={user.picture} />
           </Popover.Target>
