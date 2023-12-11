@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { ChevronDownIcon } from "lucide-react";
 import { Collapse, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { Icon as IconComponent } from "~/components/Icon";
 
 export const Section = ({
   title,
@@ -23,7 +24,11 @@ export const Section = ({
         }
         onClick={toggle}
       >
-        <Icon className={"mr-2"} />
+        <IconComponent
+          IconComponent={Icon}
+          className={"mr-2"}
+          firefoxMarginClass={"mb-2"}
+        />
         <Title
           order={2}
           style={{
@@ -32,10 +37,12 @@ export const Section = ({
         >
           {title}
         </Title>
-        <ChevronDownIcon
+        <IconComponent
+          IconComponent={ChevronDownIcon}
           className={`ml-3 h-5 w-5 transition-all ${
             opened ? "rotate-180" : "rotate-0"
           }`}
+          firefoxMarginClass={"mb-2"}
         />
       </div>
       <Collapse in={opened}>{children}</Collapse>

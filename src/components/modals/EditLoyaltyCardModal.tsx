@@ -25,8 +25,6 @@ const EditLoyaltyCardModal = ({
     validate: zodResolver(editLoyaltyCardSchema),
   });
 
-  console.log(card);
-
   const utils = api.useUtils();
 
   const { mutate, isLoading } = api.loyaltyCard.updateLoyaltyCard.useMutation({

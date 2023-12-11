@@ -131,7 +131,6 @@ export function useNextRouterViewTransitions({ events }: NextRouter): void {
       _url: string,
       { shallow }: { shallow: boolean },
     ): void {
-      console.log("beginNavigation", shallow);
       if (shallow) return;
 
       void startViewTransition();

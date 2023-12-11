@@ -14,7 +14,6 @@ export default function Home() {
           name="description"
           content="Shopping list and expenses tracker app"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center">
         {user ? (

@@ -85,6 +85,10 @@ export const ListPageContent = ({
         <div>
           <Text
             c={"dimmed"}
+            mt={{
+              base: 11,
+              md: 0,
+            }}
             style={{
               viewTransitionName: `list-header`,
             }}
@@ -92,6 +96,7 @@ export const ListPageContent = ({
             List
           </Text>
           <Title
+            visibleFrom={"sm"}
             style={{
               viewTransitionName: `list-title-${listId}`,
             }}
@@ -166,6 +171,17 @@ export const ListPageContent = ({
           )}
         </div>
       </div>
+      <Title
+        hiddenFrom={"sm"}
+        style={{
+          viewTransitionName: `list-title-${listId}`,
+        }}
+        className={"mt-1"}
+      >
+        {list?.name ?? basicListData?.name ?? (
+          <Skeleton className={"mt-1 h-10 w-40"} />
+        )}
+      </Title>
       {list?.items.length === 0 ? (
         <div className={"mt-10 flex flex-col items-center"}>
           <Image

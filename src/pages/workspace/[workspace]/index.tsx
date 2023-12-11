@@ -34,6 +34,7 @@ import { openLoyaltyCardModal } from "~/components/modals/LoyaltyCardModal";
 import { Section } from "~/components/pages/workspace/Section";
 import { openCreateListModal } from "~/components/modals/CreateListModal";
 import { openCreateLoyaltyCardModal } from "~/components/modals/CreateLoyaltyCardModal";
+import { Icon } from "~/components/Icon";
 
 export const WorkspaceDetailPage = withPageAuthRequired(() => {
   const { query } = useRouter();
@@ -60,11 +61,16 @@ export const WorkspaceDetailPage = withPageAuthRequired(() => {
           <div>
             <Text
               c={"dimmed"}
+              mt={{
+                base: 11,
+                md: 0,
+              }}
               style={{ viewTransitionName: `workspace-header` }}
             >
               Workspace
             </Text>
             <Title
+              visibleFrom={"sm"}
               style={{
                 viewTransitionName: `workspace-title-${workspaceId}`,
               }}
@@ -88,13 +94,25 @@ export const WorkspaceDetailPage = withPageAuthRequired(() => {
 
               <Menu.Dropdown>
                 <Menu.Item
-                  leftSection={<ListTodoIcon className={"h-4 w-4"} />}
+                  leftSection={
+                    <Icon
+                      IconComponent={ListTodoIcon}
+                      className={"h-4 w-4"}
+                      firefoxMarginClass={"mb-1"}
+                    />
+                  }
                   onClick={() => openCreateListModal({ workspaceId })}
                 >
                   List
                 </Menu.Item>
                 <Menu.Item
-                  leftSection={<CreditCardIcon className={"h-4 w-4"} />}
+                  leftSection={
+                    <Icon
+                      IconComponent={CreditCardIcon}
+                      className={"h-4 w-4"}
+                      firefoxMarginClass={"mb-1"}
+                    />
+                  }
                   onClick={() => openCreateLoyaltyCardModal({ workspaceId })}
                 >
                   Loyalty card
@@ -112,6 +130,17 @@ export const WorkspaceDetailPage = withPageAuthRequired(() => {
             </ActionIcon>
           </div>
         </div>
+        <Title
+          style={{
+            viewTransitionName: `workspace-title-${workspaceId}`,
+          }}
+          className={"mt-1"}
+          hiddenFrom={"sm"}
+        >
+          {workspace?.name ?? basicWorkspaceInfo?.name ?? (
+            <Skeleton className={"mt-1 h-10 w-40"} />
+          )}
+        </Title>
         <div className={"mt-3 flex"}>
           <Card className={"flex flex-row items-center justify-center"}>
             <Text className={"mr-2"}>Owner:</Text>
@@ -162,7 +191,11 @@ export const WorkspaceDetailPage = withPageAuthRequired(() => {
           </Flex>
         </Section>
         <div className={"mt-3 flex items-center"}>
-          <BarChart3Icon className={"mr-2"} />
+          <Icon
+            IconComponent={BarChart3Icon}
+            className={"mr-2"}
+            firefoxMarginClass={"mb-2"}
+          />
           <Title order={2}>Expense report</Title>
         </div>
         <Text className={"mt-2"}>This feature is coming soon</Text>

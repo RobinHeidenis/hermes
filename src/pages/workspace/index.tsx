@@ -7,6 +7,7 @@ import { SkeletonWorkspaceCard } from "~/components/pages/workspace/SkeletonWork
 import type { ComponentType, ReactNode } from "react";
 import { openCreateWorkspaceModal } from "~/components/modals/CreateWorkspaceModal";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import { Icon } from "~/components/Icon";
 
 export const WorkspaceIndex = withPageAuthRequired(() => {
   const { data, isLoading } = api.workspace.getWorkspaces.useQuery();
@@ -26,11 +27,20 @@ export const WorkspaceIndex = withPageAuthRequired(() => {
           leftSection={<PlusIcon className={"h-5 w-5"} />}
           onClick={openCreateWorkspaceModal}
         >
-          New workspace
+          <Text hiddenFrom={"sm"} size={"sm"} fw={700}>
+            New
+          </Text>
+          <Text visibleFrom={"sm"} size={"sm"} fw={700}>
+            New workspace
+          </Text>
         </Button>
       </div>
       <div className={"mt-5 flex items-center justify-center md:justify-start"}>
-        <ShieldIcon className={"mr-2"} />
+        <Icon
+          IconComponent={ShieldIcon}
+          className={"mr-2"}
+          firefoxMarginClass={"mb-2"}
+        />
         <Title order={2}>My workspaces</Title>
       </div>
       <Flex
@@ -47,8 +57,17 @@ export const WorkspaceIndex = withPageAuthRequired(() => {
         />
       </Flex>
       <div className={"mt-5 flex items-center justify-center md:justify-start"}>
-        <UsersIcon className={"mr-2"} />
-        <Title order={2}>Contributing workspaces</Title>
+        <Icon
+          IconComponent={UsersIcon}
+          className={"mr-2"}
+          firefoxMarginClass={"mb-2"}
+        />
+        <Title order={2} visibleFrom={"sm"}>
+          Contributing workspaces
+        </Title>
+        <Title order={2} hiddenFrom={"sm"}>
+          Contributing
+        </Title>
       </div>
       <Flex
         gap={30}
@@ -75,6 +94,7 @@ interface ArrayDataDisplayProps<T extends Array<{ id: string }>, R> {
   array: T | undefined | null;
   DisplayElement: ComponentType<T[number]>;
 }
+
 export const ArrayDataDisplay = <T extends Array<{ id: string }>, R>({
   skeleton,
   noItems,
