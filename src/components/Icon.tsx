@@ -12,7 +12,9 @@ export const Icon = ({
   return (
     <IconComponent
       className={`${className} ${
-        navigator && navigator.userAgent.indexOf("Firefox") > -1
+        typeof window !== "undefined" &&
+        navigator &&
+        navigator?.userAgent.indexOf("Firefox") > -1
           ? firefoxMarginClass
           : ""
       }`}

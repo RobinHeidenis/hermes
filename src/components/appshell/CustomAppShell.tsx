@@ -29,7 +29,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { Icon } from "~/components/Icon";
 
 const AppLogo = () => {
-  const isFirefox = navigator && navigator.userAgent.indexOf("Firefox") > -1;
+  const isFirefox =
+    typeof window !== "undefined" &&
+    navigator &&
+    navigator?.userAgent.indexOf("Firefox") > -1;
 
   return (
     <>
