@@ -12,7 +12,9 @@ export const Icon = ({
   return (
     <IconComponent
       className={`${className} ${
-        navigator.userAgent.indexOf("Firefox") > -1 ? firefoxMarginClass : ""
+        navigator && navigator.userAgent.indexOf("Firefox") > -1
+          ? firefoxMarginClass
+          : ""
       }`}
     />
   );
