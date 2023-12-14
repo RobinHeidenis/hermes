@@ -1,4 +1,4 @@
-// settings for receipts, such as item categories
+// settings for expenses, such as item categories
 
 import { CustomAppShell } from "~/components/appshell/CustomAppShell";
 import { Title } from "@mantine/core";

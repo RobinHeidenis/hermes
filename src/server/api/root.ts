@@ -1,10 +1,11 @@
-import { createTRPCRouter } from "~/server/api/trpc";
-import { workspaceRouter } from "~/server/api/routers/workspace";
-import { userRouter } from "~/server/api/routers/user";
-import { listRouter } from "~/server/api/routers/list";
-import { itemRouter } from "~/server/api/routers/item";
-import { inviteRouter } from "~/server/api/routers/invite";
-import { loyaltyCardRouter } from "./routers/loyaltyCard";
+import {createTRPCRouter} from "~/server/api/trpc";
+import {workspaceRouter} from "~/server/api/routers/workspace";
+import {userRouter} from "~/server/api/routers/user";
+import {listRouter} from "~/server/api/routers/list";
+import {itemRouter} from "~/server/api/routers/item";
+import {inviteRouter} from "~/server/api/routers/invite";
+import {loyaltyCardRouter} from "./routers/loyaltyCard";
+import {expenseRouter} from "~/server/api/routers/expense";
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   item: itemRouter,
   invite: inviteRouter,
   loyaltyCard: loyaltyCardRouter,
+  expense: expenseRouter,
 });
 
 // export type definition of API
