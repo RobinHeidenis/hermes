@@ -22,7 +22,6 @@ const CreateExpenseModal = () => {
         (data) => {
           if (!data) return data;
           return [
-            ...data,
             {
               id: "temp",
               name: values.name ?? null,
@@ -31,6 +30,7 @@ const CreateExpenseModal = () => {
               createdAt: new Date(),
               workspaceId: query.workspace as string,
             },
+            ...data,
           ];
         },
       );
