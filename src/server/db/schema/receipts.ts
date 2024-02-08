@@ -9,6 +9,18 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { receiptItems, workspaces } from "~/server/db/schema";
+import {
+  ArmchairIcon,
+  BriefcaseIcon,
+  CakeIcon,
+  CarIcon,
+  CoinsIcon,
+  HomeIcon,
+  PawPrintIcon,
+  StoreIcon,
+  UtensilsIcon,
+  WalletIcon,
+} from "lucide-react";
 
 export const categoryEnum = pgEnum("category", [
   "groceries",
@@ -16,6 +28,7 @@ export const categoryEnum = pgEnum("category", [
   "snacks",
   "leisure",
   "fixed",
+  "restaurant",
   "transport",
   "professional",
   "pets",
@@ -40,3 +53,16 @@ export const receiptsRelations = relations(receipts, ({ one, many }) => ({
   }),
   items: many(receiptItems),
 }));
+
+export const categoryToIconMap = {
+  groceries: { Icon: StoreIcon, color: "blue" },
+  household: { Icon: HomeIcon, color: "green" },
+  snacks: { Icon: CakeIcon, color: "orange" },
+  leisure: { Icon: ArmchairIcon, color: "violet" },
+  restaurant: { Icon: UtensilsIcon, color: "pink" },
+  fixed: { Icon: WalletIcon, color: "indigo" },
+  transport: { Icon: CarIcon, color: "cyan" },
+  professional: { Icon: BriefcaseIcon, color: "teal" },
+  pets: { Icon: PawPrintIcon, color: "yellow" },
+  other: { Icon: CoinsIcon, color: "red" },
+};
