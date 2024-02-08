@@ -138,7 +138,9 @@ export const expenseRouter = createTRPCRouter({
         name: input.name,
         price: input.price.toString(),
         monthly: input.monthly,
-        createdAt: input.date,
+        createdAt: input.monthly
+          ? dayjs(input.date).endOf("month").subtract(1, "hour").toDate()
+          : input.date,
       });
     }),
 });
