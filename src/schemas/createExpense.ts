@@ -7,6 +7,7 @@ export const createExpenseSchema = workspaceIdSchema.merge(
     name: z.string().min(2).max(50),
     price: z.coerce.number().finite().max(999999.99),
     category: z.enum(categoryEnum.enumValues),
+    monthly: z.boolean().default(false),
     date: z.date().default(() => new Date()),
   }),
 );
