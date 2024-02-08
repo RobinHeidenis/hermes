@@ -1,12 +1,21 @@
-import { Button, Loader, NumberInput, Select, TextInput } from "@mantine/core";
+import {
+  Button,
+  Loader,
+  NumberInput,
+  Select,
+  Switch,
+  Text,
+  TextInput,
+  Tooltip,
+} from "@mantine/core";
 import { modals } from "@mantine/modals";
-import { PlusIcon } from "lucide-react";
+import { HelpCircleIcon, PlusIcon } from "lucide-react";
 import { api } from "~/utils/api";
 import { useForm, zodResolver } from "@mantine/form";
 import { useRouter } from "next/router";
 import { createExpenseSchema } from "~/schemas/createExpense";
 import type { categoryEnum } from "~/server/db/schema";
-import { DateInput } from "@mantine/dates";
+import { DateInput, MonthPickerInput } from "@mantine/dates";
 import "@mantine/dates/styles.css";
 
 const selectInputData: {
@@ -47,6 +56,7 @@ const CreateExpenseModal = () => {
               name: values.name ?? null,
               price: values.price?.toString() ?? null,
               category: values.category ?? null,
+              monthly: values.monthly ?? false,
               createdAt: new Date(),
               workspaceId: query.workspace as string,
             },
@@ -75,6 +85,7 @@ const CreateExpenseModal = () => {
       name: "",
       price: 0.0,
       category: "other" as (typeof categoryEnum.enumValues)[number],
+      monthly: false,
       date: new Date(),
       workspaceId: query.workspace as string,
     },
@@ -114,7 +125,22 @@ const CreateExpenseModal = () => {
         allowDeselect={false}
         {...form.getInputProps("category")}
       />
-      <DateInput label={"Date"} {...form.getInputProps("date")} />
+      {form.values.monthly ? (
+        <MonthPickerInput label={"Month"} {...form.getInputProps("date")} />
+      ) : (
+        <DateInput label={"Date"} {...form.getInputProps("date")} />
+      )}
+      <Switch
+        label={
+          <Text className={"inline-flex items-center gap-x-2"}>
+            Monthly
+            <Tooltip label={"If this expense is for a whole month or not"}>
+              <HelpCircleIcon className={"mb-1 h-4 w-4"} />
+            </Tooltip>
+          </Text>
+        }
+        {...form.getInputProps("monthly")}
+      />
       <Button
         type={"submit"}
         className={"mt-5 self-end"}
