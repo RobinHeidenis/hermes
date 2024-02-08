@@ -26,6 +26,7 @@ const selectInputData: {
   { value: "household", label: "Household" },
   { value: "snacks", label: "Snacks" },
   { value: "leisure", label: "Leisure" },
+  { value: "restaurant", label: "Restaurant" },
   { value: "fixed", label: "Fixed costs" },
   {
     value: "transport",

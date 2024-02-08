@@ -1,0 +1,1 @@
+ALTER TYPE "category" ADD VALUE 'restaurant';

@@ -10,19 +10,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import {
-  ArmchairIcon,
-  BriefcaseIcon,
-  CakeIcon,
-  CarIcon,
-  CoinsIcon,
-  HomeIcon,
-  PawPrintIcon,
-  PlusIcon,
-  StoreIcon,
-  TagIcon,
-  WalletIcon,
-} from "lucide-react";
+import { PlusIcon, TagIcon } from "lucide-react";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
@@ -31,6 +19,9 @@ import { openCreateExpenseModal } from "~/components/modals/CreateExpenseModal";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { useCalculateExpenseTotals } from "~/hooks/useCalculateExpenseTotals";
 import { OverviewCard } from "~/components/pages/expenses/OverviewCard";
+import { openExpenseModal } from "~/components/modals/ExpenseModal";
+import { categoryToIconMap } from "~/server/db/schema";
+import { useHotkeys } from "@mantine/hooks";
 
 dayjs.extend(relativeTime);
 
@@ -45,16 +36,18 @@ type Period =
   | "6-months"
   | "1-year";
 
-const categoryMap = {
-  groceries: { Icon: StoreIcon, color: "blue" },
-  household: { Icon: HomeIcon, color: "green" },
-  snacks: { Icon: CakeIcon, color: "orange" },
-  leisure: { Icon: ArmchairIcon, color: "violet" },
-  fixed: { Icon: WalletIcon, color: "indigo" },
-  transport: { Icon: CarIcon, color: "cyan" },
-  professional: { Icon: BriefcaseIcon, color: "teal" },
-  pets: { Icon: PawPrintIcon, color: "yellow" },
-  other: { Icon: CoinsIcon, color: "red" },
+const useFormatDate = () => {
+  return (rawDate: Date, monthly: boolean) => {
+    const date = dayjs(rawDate);
+
+    if (monthly) {
+      return date.isBefore(dayjs().startOf("year"))
+        ? date.format("MMMM YYYY")
+        : date.format("MMMM");
+    }
+
+    return date.format("DD/MM/YYYY");
+  };
 };
 
 export const ExpensesPage = withPageAuthRequired(() => {
@@ -71,6 +64,9 @@ export const ExpensesPage = withPageAuthRequired(() => {
     groupedExpenses,
     expensesInThisMonth,
   } = useCalculateExpenseTotals(expenses);
+  const formatDate = useFormatDate();
+
+  useHotkeys([["shift+N", openCreateExpenseModal]]);
 
   return (
     <CustomAppShell>
@@ -140,7 +136,7 @@ export const ExpensesPage = withPageAuthRequired(() => {
                 />
                 <OverviewCard
                   thisMonth={expensesInThisMonth?.length}
-                  previousMonth={0}
+                  previousMonth={groupedExpenses["Last month"]?.length ?? 0}
                   label={"Total expenses"}
                 />
               </SimpleGrid>
@@ -157,13 +153,16 @@ export const ExpensesPage = withPageAuthRequired(() => {
                   <>
                     <Text c={"dimmed"}>{date}</Text>
                     {timedExpenses?.map((i) => {
-                      const { color, Icon } = categoryMap[i.category];
+                      const { color, Icon } = categoryToIconMap[i.category];
 
                       return (
                         <Card
                           key={i.id}
+                          onClick={() => openExpenseModal(i)}
                           radius={"md"}
-                          className={"mb-3 w-full max-w-lg"}
+                          className={
+                            "mb-3 w-full max-w-lg cursor-pointer hover:bg-[--mantine-color-default-hover]"
+                          }
                         >
                           <div
                             className={
@@ -186,11 +185,10 @@ export const ExpensesPage = withPageAuthRequired(() => {
                                 <div className={"flex items-center"}>
                                   <Text c={"dimmed"}>
                                     {i.createdAt
-                                      ? i.monthly
-                                        ? dayjs(i.createdAt).format("MMMM")
-                                        : dayjs(i.createdAt).format(
-                                            "DD/MM/YYYY",
-                                          )
+                                      ? formatDate(
+                                          i.createdAt,
+                                          i.monthly ?? false,
+                                        )
                                       : "Unknown"}
                                   </Text>
                                 </div>

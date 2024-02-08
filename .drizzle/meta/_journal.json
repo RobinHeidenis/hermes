@@ -57,6 +57,13 @@
       "when": 1707413540682,
       "tag": "0007_workable_black_tom",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1707431384843,
+      "tag": "0008_zippy_champions",
+      "breakpoints": true
     }
   ]
 }
