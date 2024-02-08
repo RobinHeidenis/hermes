@@ -209,7 +209,7 @@ export const ExpensesPage = withPageAuthRequired(() => {
                                   {Intl.NumberFormat("nl-NL", {
                                     style: "currency",
                                     currency: "EUR",
-                                  }).format(parseInt(i.price ?? "0"))}
+                                  }).format(parseFloat(i.price ?? "0"))}
                                 </Text>
                               </div>
                             </div>
