@@ -10,9 +10,14 @@ import { relations } from "drizzle-orm";
 import { receiptItems, workspaces } from "~/server/db/schema";
 
 export const categoryEnum = pgEnum("category", [
-  "household",
   "groceries",
+  "household",
   "snacks",
+  "leisure",
+  "fixed",
+  "transport",
+  "professional",
+  "pets",
   "other",
 ]);
 export const receipts = pgTable("receipts", {

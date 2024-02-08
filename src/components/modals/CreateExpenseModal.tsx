@@ -6,6 +6,26 @@ import { useForm, zodResolver } from "@mantine/form";
 import { useRouter } from "next/router";
 import { createExpenseSchema } from "~/schemas/createExpense";
 import type { categoryEnum } from "~/server/db/schema";
+import { DateInput } from "@mantine/dates";
+import "@mantine/dates/styles.css";
+
+const selectInputData: {
+  value: (typeof categoryEnum.enumValues)[number];
+  label: string;
+}[] = [
+  { value: "groceries", label: "Groceries" },
+  { value: "household", label: "Household" },
+  { value: "snacks", label: "Snacks" },
+  { value: "leisure", label: "Leisure" },
+  { value: "fixed", label: "Fixed costs" },
+  {
+    value: "transport",
+    label: "Transport & travel",
+  },
+  { value: "professional", label: "Professional" },
+  { value: "pets", label: "Pets" },
+  { value: "other", label: "Other" },
+];
 
 const CreateExpenseModal = () => {
   const { query } = useRouter();
@@ -55,6 +75,7 @@ const CreateExpenseModal = () => {
       name: "",
       price: 0.0,
       category: "other" as (typeof categoryEnum.enumValues)[number],
+      date: new Date(),
       workspaceId: query.workspace as string,
     },
     validate: zodResolver(createExpenseSchema),
@@ -62,7 +83,7 @@ const CreateExpenseModal = () => {
 
   return (
     <form
-      className={"flex flex-col"}
+      className={"flex flex-col gap-y-3"}
       onSubmit={form.onSubmit((values) => mutate(values))}
     >
       <div className={"flex"}>
@@ -88,16 +109,12 @@ const CreateExpenseModal = () => {
         label={"Category"}
         placeholder={"Groceries"}
         required
-        data={[
-          { value: "groceries", label: "Groceries" },
-          { value: "household", label: "Household" },
-          { value: "snacks", label: "Snacks" },
-          { value: "other", label: "Other" },
-        ]}
+        data={selectInputData}
         searchable
         allowDeselect={false}
         {...form.getInputProps("category")}
       />
+      <DateInput label={"Date"} {...form.getInputProps("date")} />
       <Button
         type={"submit"}
         className={"mt-5 self-end"}

@@ -17,6 +17,7 @@ import { UserAvatar } from "~/components/pages/workspace/UserAvatar";
 import { ArrayDataDisplay, WorkspaceSkeletons } from "~/pages/workspace";
 import { ListCard } from "~/components/pages/workspace/ListCard";
 import {
+  ArrowRightIcon,
   BarChart3Icon,
   ChevronDownIcon,
   CreditCardIcon,
@@ -35,9 +36,10 @@ import { Section } from "~/components/pages/workspace/Section";
 import { openCreateListModal } from "~/components/modals/CreateListModal";
 import { openCreateLoyaltyCardModal } from "~/components/modals/CreateLoyaltyCardModal";
 import { Icon } from "~/components/Icon";
+import Link from "next/link";
 
 export const WorkspaceDetailPage = withPageAuthRequired(() => {
-  const { query } = useRouter();
+  const { query, asPath } = useRouter();
   const utils = api.useUtils();
 
   const { data: workspace, isLoading } = api.workspace.getWorkspace.useQuery(
@@ -190,15 +192,27 @@ export const WorkspaceDetailPage = withPageAuthRequired(() => {
             )}
           </Flex>
         </Section>
-        <div className={"mt-3 flex items-center"}>
-          <Icon
-            IconComponent={BarChart3Icon}
-            className={"mr-2"}
-            firefoxMarginClass={"mb-2"}
-          />
-          <Title order={2}>Expense report</Title>
-        </div>
-        <Text className={"mt-2"}>This feature is coming soon</Text>
+        <Section title={"Expense report"} Icon={BarChart3Icon}>
+          <Flex
+            gap={30}
+            className={"mt-5 flex-wrap justify-center md:justify-start"}
+          >
+            <Card
+              maw={"20rem"}
+              miw={"20rem"}
+              withBorder
+              radius={"md"}
+              className={
+                "mantine-focus-auto flex transform flex-row justify-between shadow-sm transition hover:scale-105 hover:cursor-pointer hover:shadow-md focus:scale-105"
+              }
+              component={Link}
+              href={`${asPath}/expenses`}
+            >
+              <Title order={5}>See your expenses</Title>
+              <ArrowRightIcon />
+            </Card>
+          </Flex>
+        </Section>
       </>
     </CustomAppShell>
   );

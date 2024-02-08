@@ -137,6 +137,7 @@ export const expenseRouter = createTRPCRouter({
         category: input.category,
         name: input.name,
         price: input.price.toString(),
+        createdAt: input.date,
       });
     }),
 });
