@@ -185,7 +185,9 @@ export const ExpensesPage = withPageAuthRequired(() => {
                                 </Text>
                                 <div className={"flex items-center"}>
                                   <Text c={"dimmed"}>
-                                    {i.createdAt?.toLocaleDateString()}
+                                    {i.createdAt
+                                      ? dayjs(i.createdAt).format("DD/mm/YYYY")
+                                      : "Unknown"}
                                   </Text>
                                 </div>
                               </div>
