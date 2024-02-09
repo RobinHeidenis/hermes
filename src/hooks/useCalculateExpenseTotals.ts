@@ -46,26 +46,7 @@ type GroupedByDate = {
 export const useCalculateExpenseTotals = (
   expenses: RouterOutputs["expense"]["getLast50Expenses"] | undefined,
 ) => {
-  const groupedExpenses: Partial<GroupedByDate> = expenses
+  return expenses
     ? (groupBy(expenses, groupByDate) as Partial<GroupedByDate>)
     : {};
-  const expensesInThisMonth = expenses?.filter((expense) =>
-    dayjs(expense.createdAt).isAfter(dayjs().startOf("month")),
-  );
-  const totalSpentThisMonth = expensesInThisMonth?.reduce(
-    (prev, curr) => prev + Number(curr.price),
-    0,
-  );
-  const totalSpentInPreviousMonth =
-    groupedExpenses["Last month"]?.reduce(
-      (prev, curr) => prev + Number(curr.price),
-      0,
-    ) ?? 0;
-
-  return {
-    groupedExpenses,
-    expensesInThisMonth,
-    totalSpentThisMonth,
-    totalSpentInPreviousMonth,
-  };
 };
