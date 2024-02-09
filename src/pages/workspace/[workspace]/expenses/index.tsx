@@ -2,15 +2,12 @@ import { CustomAppShell } from "~/components/appshell/CustomAppShell";
 import {
   ActionIcon,
   Affix,
-  Badge,
   Button,
-  Card,
   SimpleGrid,
   Text,
-  ThemeIcon,
   Title,
 } from "@mantine/core";
-import { PlusIcon, TagIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
@@ -19,9 +16,8 @@ import { openCreateExpenseModal } from "~/components/modals/CreateExpenseModal";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { useCalculateExpenseTotals } from "~/hooks/useCalculateExpenseTotals";
 import { OverviewCard } from "~/components/pages/expenses/OverviewCard";
-import { openExpenseModal } from "~/components/modals/ExpenseModal";
-import { categoryToIconMap } from "~/server/db/schema";
 import { useHotkeys } from "@mantine/hooks";
+import { ExpenseCard } from "~/components/pages/expenses/ExpenseCard";
 
 dayjs.extend(relativeTime);
 
@@ -36,37 +32,50 @@ type Period =
   | "6-months"
   | "1-year";
 
-const useFormatDate = () => {
-  return (rawDate: Date, monthly: boolean) => {
-    const date = dayjs(rawDate);
-
-    if (monthly) {
-      return date.isBefore(dayjs().startOf("year"))
-        ? date.format("MMMM YYYY")
-        : date.format("MMMM");
-    }
-
-    return date.format("DD/MM/YYYY");
-  };
-};
-
 export const ExpensesPage = withPageAuthRequired(() => {
-  const { query } = useRouter();
-  const { data: expenses } = api.expense.getLast50Expenses.useQuery(
+  const { query, replace } = useRouter();
+  const page = parseInt((query.page as string) ?? "0");
+
+  const { data } = api.expense.paginatedExpenses.useQuery(
     {
       workspaceId: query.workspace as string,
+      offset: parseInt((query.page as string) ?? "0") * 50,
     },
     { enabled: !!query.workspace },
   );
-  const {
-    totalSpentThisMonth,
-    totalSpentInPreviousMonth,
-    groupedExpenses,
-    expensesInThisMonth,
-  } = useCalculateExpenseTotals(expenses);
-  const formatDate = useFormatDate();
+  const { data: monthStats } = api.expense.monthStats.useQuery(
+    { workspaceId: query.workspace as string },
+    { enabled: !!query.workspace },
+  );
+  const groupedExpenses = useCalculateExpenseTotals(data?.expenses);
 
-  useHotkeys([["shift+N", openCreateExpenseModal]]);
+  useHotkeys([
+    ["shift+N", openCreateExpenseModal],
+    [
+      "ctrl+ArrowRight",
+      () => {
+        if (data?.hasNextPage) {
+          void replace(
+            `/workspace/${query.workspace as string}/expenses?page=${page + 1}`,
+            undefined,
+            { shallow: true },
+          );
+        }
+      },
+    ],
+    [
+      "ctrl+ArrowLeft",
+      () => {
+        if (data?.hasPreviousPage) {
+          void replace(
+            `/workspace/${query.workspace as string}/expenses?page=${page - 1}`,
+            undefined,
+            { shallow: true },
+          );
+        }
+      },
+    ],
+  ]);
 
   return (
     <CustomAppShell>
@@ -129,19 +138,61 @@ export const ExpensesPage = withPageAuthRequired(() => {
               </Title>
               <SimpleGrid cols={2} className={"mt-2 w-full max-w-lg"}>
                 <OverviewCard
-                  thisMonth={totalSpentThisMonth}
-                  previousMonth={totalSpentInPreviousMonth}
+                  thisMonth={monthStats?.spentThisMonth}
+                  previousMonth={monthStats?.spentPreviousMonth}
                   label={"Total spent"}
                   money
                 />
                 <OverviewCard
-                  thisMonth={expensesInThisMonth?.length}
-                  previousMonth={groupedExpenses["Last month"]?.length ?? 0}
+                  thisMonth={monthStats?.amountThisMonth}
+                  previousMonth={monthStats?.amountPreviousMonth}
                   label={"Total expenses"}
                 />
               </SimpleGrid>
             </div>
             <div className={"mt-3 w-full max-w-lg"}>
+              {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+              {(data?.hasNextPage || data?.hasPreviousPage) &&
+                (data?.expenses.length ?? 0) > 0 && (
+                  <div
+                    className={
+                      "my-5 flex w-full items-center justify-between gap-x-10"
+                    }
+                  >
+                    <Button
+                      justify={"space-between"}
+                      leftSection={<ChevronLeftIcon />}
+                      className={"w-32"}
+                      variant={"light"}
+                      onClick={() => {
+                        void replace(
+                          `/workspace/${query.workspace as string}/expenses?page=${page - 1}`,
+                          undefined,
+                          { shallow: true },
+                        );
+                      }}
+                      disabled={!data?.hasPreviousPage}
+                    >
+                      Previous
+                    </Button>
+                    <Button
+                      justify={"space-between"}
+                      rightSection={<ChevronRightIcon />}
+                      className={"w-32"}
+                      variant={"light"}
+                      onClick={() => {
+                        void replace(
+                          `/workspace/${query.workspace as string}/expenses?page=${page + 1}`,
+                          undefined,
+                          { shallow: true },
+                        );
+                      }}
+                      disabled={!data?.hasNextPage}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
               <Title order={4}>Expenses</Title>
               {Object.keys(groupedExpenses).length === 0 && (
                 <Text c={"dimmed"}>No expenses yet</Text>
@@ -152,85 +203,47 @@ export const ExpensesPage = withPageAuthRequired(() => {
                 return (
                   <>
                     <Text c={"dimmed"}>{date}</Text>
-                    {timedExpenses?.map((i) => {
-                      const { color, Icon } = categoryToIconMap[i.category];
-
-                      return (
-                        <Card
-                          key={i.id}
-                          onClick={() => openExpenseModal(i)}
-                          radius={"md"}
-                          className={
-                            "mb-3 w-full max-w-lg cursor-pointer hover:bg-[--mantine-color-default-hover]"
-                          }
-                        >
-                          <div
-                            className={
-                              "flex flex-row items-center justify-between"
-                            }
-                          >
-                            <div className={"flex items-center"}>
-                              <ThemeIcon
-                                variant={"light"}
-                                className={"mr-3"}
-                                size={"xl"}
-                                color={color}
-                              >
-                                <Icon />
-                              </ThemeIcon>
-                              <div>
-                                <Text size={"md"} fw={700}>
-                                  {i.name}
-                                </Text>
-                                <div className={"flex items-center"}>
-                                  <Text c={"dimmed"}>
-                                    {i.createdAt
-                                      ? formatDate(
-                                          i.createdAt,
-                                          i.monthly ?? false,
-                                        )
-                                      : "Unknown"}
-                                  </Text>
-                                </div>
-                              </div>
-                            </div>
-                            <div>
-                              <div className={"flex items-center"}>
-                                <Badge
-                                  visibleFrom={"md"}
-                                  color={color}
-                                  variant={"light"}
-                                  className={"mr-5"}
-                                  leftSection={
-                                    <TagIcon className={"h-3 w-3"} />
-                                  }
-                                >
-                                  {i.category}
-                                </Badge>
-                                <Text size={"lg"} fw={700}>
-                                  {Intl.NumberFormat("nl-NL", {
-                                    style: "currency",
-                                    currency: "EUR",
-                                  }).format(parseFloat(i.price ?? "0"))}
-                                </Text>
-                              </div>
-                            </div>
-                          </div>
-                          <Badge
-                            hiddenFrom={"md"}
-                            color={color}
-                            variant={"light"}
-                            className={"mt-2"}
-                            leftSection={<TagIcon className={"h-3 w-3"} />}
-                          >
-                            {i.category}
-                          </Badge>
-                        </Card>
-                      );
-                    })}
+                    {timedExpenses?.map((i) => (
+                      <ExpenseCard key={i.id} expense={i} />
+                    ))}
                   </>
                 );
               })}
+            </div>
+            <div className={"mb-20 mt-5 flex items-center gap-x-10"}>
+              <Button
+                justify={"space-between"}
+                leftSection={<ChevronLeftIcon />}
+                className={"w-32"}
+                variant={"light"}
+                onClick={() => {
+                  void replace(
+                    `/workspace/${query.workspace as string}/expenses?page=${page - 1}`,
+                    undefined,
+                    { shallow: true, scroll: true },
+                  );
+                }}
+                disabled={!data?.hasPreviousPage}
+              >
+                Previous
+              </Button>
+              <Text>{page + 1}</Text>
+              <Button
+                justify={"space-between"}
+                rightSection={<ChevronRightIcon />}
+                className={"w-32"}
+                variant={"light"}
+                onClick={() => {
+                  void replace(
+                    `/workspace/${query.workspace as string}/expenses?page=${page + 1}`,
+                    undefined,
+                    { shallow: true, scroll: true },
+                  );
+                }}
+                disabled={!data?.hasNextPage}
+              >
+                Next
+              </Button>
             </div>
           </div>
         </div>
