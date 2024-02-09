@@ -18,7 +18,7 @@ import type { categoryEnum } from "~/server/db/schema";
 import { DateInput, MonthPickerInput } from "@mantine/dates";
 import "@mantine/dates/styles.css";
 
-const selectInputData: {
+export const selectInputData: {
   value: (typeof categoryEnum.enumValues)[number];
   label: string;
 }[] = [

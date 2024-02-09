@@ -64,6 +64,13 @@
       "when": 1707431384843,
       "tag": "0008_zippy_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1707439536622,
+      "tag": "0009_long_machine_man",
+      "breakpoints": true
     }
   ]
 }

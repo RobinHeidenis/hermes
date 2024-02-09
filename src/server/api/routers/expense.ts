@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { getExpensesSchema } from "~/schemas/getExpenses";
-import { and, desc, eq, gt } from "drizzle-orm";
+import { and, asc, desc, eq, gt } from "drizzle-orm";
 import { receipts, workspaces } from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import type { ManipulateType } from "dayjs";
@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import { workspaceIdSchema } from "~/schemas/workspaceId";
 import { createExpenseSchema } from "~/schemas/createExpense";
 import { deleteExpenseSchema } from "~/schemas/deleteExpense";
+import { updateExpenseSchema } from "~/schemas/updateExpense";
 
 export const expenseRouter = createTRPCRouter({
   getExpenses: protectedProcedure
@@ -95,9 +96,58 @@ export const expenseRouter = createTRPCRouter({
 
       return ctx.db.query.receipts.findMany({
         where: eq(receipts.workspaceId, input.workspaceId),
-        orderBy: desc(receipts.createdAt),
+        orderBy: [desc(receipts.createdAt), asc(receipts.name)],
         limit: 50,
       });
+    }),
+  updateExpense: protectedProcedure
+    .input(updateExpenseSchema)
+    .mutation(async ({ ctx, input }) => {
+      const receipt = await ctx.db.query.receipts.findFirst({
+        where: eq(receipts.id, input.id),
+        with: {
+          workspace: {
+            columns: { ownerId: true },
+            with: {
+              usersToWorkspaces: {
+                columns: {
+                  userId: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!receipt)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "That receipt was not found",
+        });
+
+      if (
+        ctx.session.user.id !== receipt.workspace.ownerId &&
+        !receipt.workspace.usersToWorkspaces.find(
+          (r) => r.userId === ctx.session.user.id,
+        )
+      )
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have access to update this expense",
+        });
+
+      return ctx.db
+        .update(receipts)
+        .set({
+          category: input.category,
+          name: input.name,
+          price: input.price.toString(),
+          monthly: input.monthly,
+          createdAt: input.monthly
+            ? dayjs(input.date).endOf("month").subtract(1, "hour").toDate()
+            : input.date,
+        })
+        .where(eq(receipts.id, input.id));
     }),
   createExpense: protectedProcedure
     .input(createExpenseSchema)
