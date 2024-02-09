@@ -13,15 +13,15 @@ import { CalendarIcon, PencilIcon, TagIcon, Trash2Icon } from "lucide-react";
 import dayjs from "dayjs";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import { openEditExpenseModal } from "~/components/modals/EditExpenseModal";
 
 interface ExpenseModalProps {
   id: string;
-  name: string | null;
-  price: string | null;
-
+  name: string;
+  price: string;
   category: (typeof categoryEnum.enumValues)[number];
-  monthly: boolean | null;
-  createdAt: Date | null;
+  monthly: boolean;
+  createdAt: Date;
 }
 
 export const ExpenseModal = ({
@@ -105,7 +105,19 @@ export const ExpenseModal = ({
           Actions
         </Title>
         <Button
-          onClick={() => console.log("edit")}
+          onClick={() =>
+            openEditExpenseModal({
+              expense: {
+                id,
+                name,
+                price,
+                category,
+                monthly,
+                createdAt,
+                workspaceId: query.workspace as string,
+              },
+            })
+          }
           variant={"light"}
           className={"mb-3 mt-1 w-full"}
           leftSection={<PencilIcon className={"h-4 w-4"} />}

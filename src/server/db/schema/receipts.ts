@@ -12,7 +12,7 @@ import { receiptItems, workspaces } from "~/server/db/schema";
 import {
   ArmchairIcon,
   BriefcaseIcon,
-  CakeIcon,
+  CandyIcon,
   CarIcon,
   CoinsIcon,
   HomeIcon,
@@ -39,10 +39,10 @@ export const receipts = pgTable("receipts", {
   workspaceId: uuid("workspace_id")
     .notNull()
     .references(() => workspaces.id),
-  monthly: boolean("monthly").default(false), // Whether this is a monthly expense that is spent for a whole month, not just on a specific day (e.g. rent, internet, etc.)
-  createdAt: timestamp("created_at").defaultNow(),
-  name: varchar("name", { length: 50 }),
-  price: numeric("price", { precision: 8, scale: 2 }), // Maximum value of 999.999,99
+  monthly: boolean("monthly").default(false).notNull(), // Whether this is a monthly expense that is spent for a whole month, not just on a specific day (e.g. rent, internet, etc.)
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  name: varchar("name", { length: 50 }).notNull(),
+  price: numeric("price", { precision: 8, scale: 2 }).notNull(), // Maximum value of 999.999,99
   category: categoryEnum("category").default("other").notNull(),
 });
 
@@ -57,7 +57,7 @@ export const receiptsRelations = relations(receipts, ({ one, many }) => ({
 export const categoryToIconMap = {
   groceries: { Icon: StoreIcon, color: "blue" },
   household: { Icon: HomeIcon, color: "green" },
-  snacks: { Icon: CakeIcon, color: "orange" },
+  snacks: { Icon: CandyIcon, color: "orange" },
   leisure: { Icon: ArmchairIcon, color: "violet" },
   restaurant: { Icon: UtensilsIcon, color: "pink" },
   fixed: { Icon: WalletIcon, color: "indigo" },
