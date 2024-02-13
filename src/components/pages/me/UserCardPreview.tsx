@@ -1,9 +1,9 @@
 import { Avatar, AvatarGroup, Card, Popover, Title } from "@mantine/core";
 import { UserCard } from "~/components/user/UserCard";
 import { useUserFormContext } from "./updateUserFormContext";
-import type { UserProfile } from "@auth0/nextjs-auth0/client";
+import type { User } from "lucia";
 
-export const UserCardPreview = ({ user }: { user: UserProfile }) => {
+export const UserCardPreview = ({ user }: { user: User }) => {
   const {
     values: { name },
   } = useUserFormContext();
@@ -14,13 +14,13 @@ export const UserCardPreview = ({ user }: { user: UserProfile }) => {
       <AvatarGroup className={"mt-1"}>
         <Popover opened withArrow position={"bottom-start"} zIndex={10}>
           <Popover.Target>
-            <Avatar src={user.picture} />
+            <Avatar src={user.image} />
           </Popover.Target>
 
           <Popover.Dropdown>
             <UserCard
               name={name.length > 0 ? name : user.name}
-              image={user.picture}
+              image={user.image}
             />
           </Popover.Dropdown>
         </Popover>

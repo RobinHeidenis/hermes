@@ -28,7 +28,6 @@ import {
   WalletCardsIcon,
 } from "lucide-react";
 import { openWorkspaceSettingsModal } from "~/components/modals/WorkspaceSettingsModal";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { ContributorsCard } from "~/components/pages/workspace/ContributorsCard";
 import { useHover } from "@mantine/hooks";
 import { openLoyaltyCardModal } from "~/components/modals/LoyaltyCardModal";
@@ -37,8 +36,12 @@ import { openCreateListModal } from "~/components/modals/CreateListModal";
 import { openCreateLoyaltyCardModal } from "~/components/modals/CreateLoyaltyCardModal";
 import { Icon } from "~/components/Icon";
 import Link from "next/link";
+import type { AuthedProps } from "~/server/api/trpc";
+import { requireAuthSSP as getServerSideProps } from "~/server/api/trpc";
 
-export const WorkspaceDetailPage = withPageAuthRequired(() => {
+export { getServerSideProps };
+
+export const WorkspaceDetailPage = ({ user }: AuthedProps) => {
   const { query, asPath } = useRouter();
   const utils = api.useUtils();
 
@@ -57,7 +60,7 @@ export const WorkspaceDetailPage = withPageAuthRequired(() => {
     workspace?.id ?? basicWorkspaceInfo?.id ?? (query.workspace as string);
 
   return (
-    <CustomAppShell>
+    <CustomAppShell user={user}>
       <>
         <div className={"flex items-center justify-between"}>
           <div>
@@ -216,7 +219,7 @@ export const WorkspaceDetailPage = withPageAuthRequired(() => {
       </>
     </CustomAppShell>
   );
-});
+};
 
 export default WorkspaceDetailPage;
 

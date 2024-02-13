@@ -3,9 +3,12 @@ import { Grid, Title } from "@mantine/core";
 import { ProfilePageContent } from "~/components/pages/me/ProfilePageContent";
 import { ProfilePageSkeleton } from "~/components/pages/me/ProfilePageSkeleton";
 import { api } from "~/utils/api";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import type { AuthedProps } from "~/server/api/trpc";
+import { requireAuthSSP as getServerSideProps } from "~/server/api/trpc";
 
-export const ProfilePage = withPageAuthRequired(({ user }) => {
+export { getServerSideProps };
+
+export const ProfilePage = ({ user }: AuthedProps) => {
   const { data: defaultWorkspace, isLoading: isGetDefaultWorkspaceLoading } =
     api.user.getDefaultWorkspace.useQuery();
   const { data: workspaces, isLoading: isGetWorkspacesLoading } =
@@ -14,7 +17,7 @@ export const ProfilePage = withPageAuthRequired(({ user }) => {
     !workspaces || isGetDefaultWorkspaceLoading || isGetWorkspacesLoading;
 
   return (
-    <CustomAppShell>
+    <CustomAppShell user={user}>
       <div className={"flex flex-col items-center"}>
         <div className={"3xl:w-1/3"}>
           <Title>Your profile</Title>
@@ -33,6 +36,6 @@ export const ProfilePage = withPageAuthRequired(({ user }) => {
       </div>
     </CustomAppShell>
   );
-});
+};
 
 export default ProfilePage;

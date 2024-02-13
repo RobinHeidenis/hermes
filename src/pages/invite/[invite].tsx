@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { CustomAppShell } from "~/components/appshell/CustomAppShell";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import {
   Avatar,
   AvatarGroup,
@@ -20,11 +19,29 @@ import { notifications } from "@mantine/notifications";
 import { UserCard } from "~/components/user/UserCard";
 import { StoreIcon, UserPlusIcon } from "lucide-react";
 import { UserAvatar } from "~/components/pages/workspace/UserAvatar";
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+  InferGetServerSidePropsType,
+} from "next";
+import type { User } from "lucia";
+import { validateRequest } from "~/server/api/trpc";
 
-const InvitePage = () => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<{ user: User | null }>> => {
+  const { user } = await validateRequest({
+    req: context.req,
+    res: context.res,
+  });
+  return { props: { user } };
+};
+
+const InvitePage = ({
+  user,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { invite } = router.query;
-  const { user } = useUser();
   const { data, isLoading, isLoadingError, error } =
     api.invite.getInvite.useQuery(
       {
@@ -72,7 +89,7 @@ const InvitePage = () => {
 
   if (!user) {
     return (
-      <CustomAppShell>
+      <CustomAppShell user={user}>
         <Center className={"h-[calc(100vh-136px)]"}>
           <Card className={"text-center"}>
             <Title order={2}>
@@ -107,7 +124,7 @@ const InvitePage = () => {
   }
 
   return (
-    <CustomAppShell>
+    <CustomAppShell user={user}>
       <Center className={"h-[calc(100vh-136px)]"}>
         <Card className={"text-center"} bg={"dark.8"} withBorder>
           <Title order={2}>You&apos;re invited!</Title>

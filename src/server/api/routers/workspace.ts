@@ -13,7 +13,7 @@ export const workspaceRouter = createTRPCRouter({
   getWorkspaces: protectedProcedure.query(async ({ ctx }) => {
     const ownedWorkspaces = (
       await ctx.db.query.workspaces.findMany({
-        where: eq(workspaces.ownerId, ctx.session.user.id),
+        where: eq(workspaces.ownerId, ctx.user.id),
         with: {
           usersToWorkspaces: {
             columns: {
@@ -35,7 +35,7 @@ export const workspaceRouter = createTRPCRouter({
 
     const collaboratingWorkspaces = (
       await ctx.db.query.usersToWorkspaces.findMany({
-        where: eq(usersToWorkspaces.userId, ctx.session.user.id),
+        where: eq(usersToWorkspaces.userId, ctx.user.id),
         with: {
           workspace: {
             with: {
@@ -71,7 +71,7 @@ export const workspaceRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const p = await ctx.db
         .insert(workspaces)
-        .values({ name: input.name, ownerId: ctx.session.user.id })
+        .values({ name: input.name, ownerId: ctx.user.id })
         .returning({ id: workspaces.id })
         .execute();
 
@@ -141,10 +141,8 @@ export const workspaceRouter = createTRPCRouter({
         });
 
       if (
-        workspace.owner.id !== ctx.session.user.id &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.user.id === ctx.session.user.id,
-        )
+        workspace.owner.id !== ctx.user.id &&
+        !workspace.usersToWorkspaces.find((r) => r.user.id === ctx.user.id)
       )
         throw new TRPCError({
           message: "You don't have permission to view that workspace",
@@ -193,10 +191,8 @@ export const workspaceRouter = createTRPCRouter({
         });
 
       if (
-        workspace.ownerId !== ctx.session.user.id &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        workspace.ownerId !== ctx.user.id &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           message: "You don't have permission to update that list",
@@ -242,7 +238,7 @@ export const workspaceRouter = createTRPCRouter({
           code: "NOT_FOUND",
         });
 
-      if (workspace.ownerId !== ctx.session.user.id)
+      if (workspace.ownerId !== ctx.user.id)
         throw new TRPCError({
           message: "You don't have permission to delete that workspace",
           code: "UNAUTHORIZED",
@@ -277,10 +273,8 @@ export const workspaceRouter = createTRPCRouter({
         });
 
       if (
-        workspace.ownerId === ctx.session.user.id ||
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        workspace.ownerId === ctx.user.id ||
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           message: "You don't have permission to leave that workspace",
@@ -292,7 +286,7 @@ export const workspaceRouter = createTRPCRouter({
         .where(
           and(
             eq(usersToWorkspaces.workspaceId, input.workspaceId),
-            eq(usersToWorkspaces.userId, ctx.session.user.id),
+            eq(usersToWorkspaces.userId, ctx.user.id),
           ),
         );
     }),
@@ -322,7 +316,7 @@ export const workspaceRouter = createTRPCRouter({
           code: "NOT_FOUND",
         });
 
-      if (workspace.ownerId !== ctx.session.user.id)
+      if (workspace.ownerId !== ctx.user.id)
         throw new TRPCError({
           message: "You don't have permission to delete that list",
           code: "UNAUTHORIZED",
@@ -377,10 +371,8 @@ export const workspaceRouter = createTRPCRouter({
         });
 
       if (
-        workspace.ownerId !== ctx.session.user.id &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        workspace.ownerId !== ctx.user.id &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           message:

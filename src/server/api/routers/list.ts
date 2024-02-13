@@ -80,9 +80,9 @@ export const listRouter = createTRPCRouter({
         });
 
       if (
-        workspace.ownerId !== ctx.session.user.id &&
+        workspace.ownerId !== ctx.user.id &&
         !workspace.usersToWorkspaces.some(
-          ({ userId }) => userId === ctx.session.user.id,
+          ({ userId }) => userId === ctx.user.id,
         )
       )
         throw new TRPCError({
@@ -132,10 +132,8 @@ export const listRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== list.workspace.ownerId &&
-        !list.workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id !== list.workspace.ownerId &&
+        !list.workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -170,10 +168,8 @@ export const listRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== list.workspace.ownerId &&
-        !list.workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id !== list.workspace.ownerId &&
+        !list.workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -204,10 +200,8 @@ export const listRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== list.workspace.ownerId &&
-        !list.workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id !== list.workspace.ownerId &&
+        !list.workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -242,10 +236,8 @@ export const listRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== list.workspace.ownerId &&
-        !list.workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id !== list.workspace.ownerId &&
+        !list.workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",

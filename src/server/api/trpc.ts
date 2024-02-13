@@ -12,9 +12,16 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "~/server/db";
-import type { Session } from "@auth0/nextjs-auth0";
-import { getSession } from "@auth0/nextjs-auth0";
-import type { NextApiRequest, NextApiResponse } from "next";
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+  InferGetServerSidePropsType,
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
+import type { Session, User } from "lucia";
+import { lucia } from "~/auth";
+import type { IncomingMessage, ServerResponse } from "http";
 
 /**
  * 1. CONTEXT
@@ -25,7 +32,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
  */
 
 type CreateContextOptions = {
-  session: Session | null | undefined;
+  user: User | null;
+  session: Session | null;
   req: NextApiRequest;
   res: NextApiResponse;
 };
@@ -43,11 +51,65 @@ type CreateContextOptions = {
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     db,
+    user: opts.user,
     session: opts.session,
     req: opts.req,
     res: opts.res,
   };
 };
+
+export const validateRequest = async ({
+  req,
+  res,
+}: {
+  req: IncomingMessage;
+  res: ServerResponse;
+}): Promise<
+  { user: User; session: Session } | { user: null; session: null }
+> => {
+  const sessionId = lucia.readSessionCookie(req.headers.cookie ?? "");
+  if (!sessionId) {
+    return { user: null, session: null };
+  }
+  const result = await lucia.validateSession(sessionId);
+  try {
+    if (result.session && result.session.fresh) {
+      const sessionCookie = lucia.createSessionCookie(result.session.id);
+      res.appendHeader("Set-Cookie", sessionCookie.serialize());
+    }
+    if (!result.session) {
+      const sessionCookie = lucia.createBlankSessionCookie();
+      res.appendHeader("Set-Cookie", sessionCookie.serialize());
+    }
+  } catch (e) {
+    console.error("Failed to set session cookie");
+  }
+  return result;
+};
+
+export const requireAuthSSP = async (
+  context: GetServerSidePropsContext,
+): Promise<
+  GetServerSidePropsResult<{
+    user: User;
+  }>
+> => {
+  const { user } = await validateRequest({
+    req: context.req,
+    res: context.res,
+  });
+  if (!user) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+  return { props: { user } };
+};
+
+export type AuthedProps = InferGetServerSidePropsType<typeof requireAuthSSP>;
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
@@ -57,9 +119,9 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
-  const session = await getSession(req, res);
+  const { user, session } = await validateRequest({ req, res });
 
-  return createInnerTRPCContext({ session, req, res });
+  return createInnerTRPCContext({ user, session, req, res });
 };
 
 /**
@@ -109,17 +171,15 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session?.user?.sub) {
+  if (!ctx.session || !ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      session: {
-        ...ctx.session,
-        user: { ...ctx.session.user, id: ctx.session.user.sub },
-      },
+      session: { ...ctx.session },
+      user: { ...ctx.user },
     },
   });
 });

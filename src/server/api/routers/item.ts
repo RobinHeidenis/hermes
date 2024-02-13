@@ -42,10 +42,8 @@ export const itemRouter = createTRPCRouter({
         });
 
       if (
-        list.workspace.ownerId !== ctx.session.user.id &&
-        !list.workspace.usersToWorkspaces.some(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        list.workspace.ownerId !== ctx.user.id &&
+        !list.workspace.usersToWorkspaces.some((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -100,10 +98,8 @@ export const itemRouter = createTRPCRouter({
         });
 
       if (
-        list.workspace.ownerId !== ctx.session.user.id &&
-        !list.workspace.usersToWorkspaces.some(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        list.workspace.ownerId !== ctx.user.id &&
+        !list.workspace.usersToWorkspaces.some((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -153,10 +149,8 @@ export const itemRouter = createTRPCRouter({
         });
 
       if (
-        list.workspace.ownerId !== ctx.session.user.id &&
-        !list.workspace.usersToWorkspaces.some(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        list.workspace.ownerId !== ctx.user.id &&
+        !list.workspace.usersToWorkspaces.some((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -226,9 +220,9 @@ export const itemRouter = createTRPCRouter({
         });
 
       if (
-        item.list.workspace.ownerId !== ctx.session.user.id &&
+        item.list.workspace.ownerId !== ctx.user.id &&
         !item.list.workspace.usersToWorkspaces.some(
-          (r) => r.userId === ctx.session.user.id,
+          (r) => r.userId === ctx.user.id,
         )
       )
         throw new TRPCError({

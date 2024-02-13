@@ -71,6 +71,20 @@
       "when": 1707439536622,
       "tag": "0009_long_machine_man",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1707800096724,
+      "tag": "0010_dashing_grim_reaper",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1707804363097,
+      "tag": "0011_ancient_vermin",
+      "breakpoints": true
     }
   ]
 }
