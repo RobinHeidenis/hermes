@@ -17,8 +17,8 @@ import { useCalculateExpenseTotals } from "~/hooks/useCalculateExpenseTotals";
 import { OverviewCard } from "~/components/pages/expenses/OverviewCard";
 import { useHotkeys } from "@mantine/hooks";
 import { ExpenseCard } from "~/components/pages/expenses/ExpenseCard";
-import type { AuthedProps } from "~/server/api/trpc";
-import { requireAuthSSP as getServerSideProps } from "~/server/api/trpc";
+import type { AuthedProps } from "~/auth";
+import { requireAuthSSP as getServerSideProps } from "~/auth";
 
 export { getServerSideProps };
 

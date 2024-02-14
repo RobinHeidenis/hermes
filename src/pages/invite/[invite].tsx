@@ -25,7 +25,7 @@ import type {
   InferGetServerSidePropsType,
 } from "next";
 import type { User } from "lucia";
-import { validateRequest } from "~/server/api/trpc";
+import { validateRequest } from "~/auth";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,

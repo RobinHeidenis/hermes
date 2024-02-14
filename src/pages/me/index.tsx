@@ -3,8 +3,8 @@ import { Grid, Title } from "@mantine/core";
 import { ProfilePageContent } from "~/components/pages/me/ProfilePageContent";
 import { ProfilePageSkeleton } from "~/components/pages/me/ProfilePageSkeleton";
 import { api } from "~/utils/api";
-import type { AuthedProps } from "~/server/api/trpc";
-import { requireAuthSSP as getServerSideProps } from "~/server/api/trpc";
+import type { AuthedProps } from "~/auth";
+import { requireAuthSSP as getServerSideProps } from "~/auth";
 
 export { getServerSideProps };
 

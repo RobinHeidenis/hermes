@@ -7,7 +7,7 @@ import type {
   InferGetServerSidePropsType,
 } from "next";
 import type { User } from "lucia";
-import { validateRequest } from "~/server/api/trpc";
+import { validateRequest } from "~/auth";
 import { SignOutForm } from "~/components/navigation/SignOutForm";
 
 export const getServerSideProps = async (

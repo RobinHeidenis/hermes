@@ -7,8 +7,8 @@ import { PlusIcon } from "lucide-react";
 import { openCreateListItemModal } from "~/components/modals/CreateListItemModal";
 import { ListPageContent } from "~/components/pages/list/ListPageContent";
 import { useState } from "react";
-import type { AuthedProps } from "~/server/api/trpc";
-import { requireAuthSSP as getServerSideProps } from "~/server/api/trpc";
+import type { AuthedProps } from "~/auth";
+import { requireAuthSSP as getServerSideProps } from "~/auth";
 
 export { getServerSideProps };
 

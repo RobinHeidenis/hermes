@@ -7,8 +7,8 @@ import { SkeletonWorkspaceCard } from "~/components/pages/workspace/SkeletonWork
 import type { ComponentType, ReactNode } from "react";
 import { openCreateWorkspaceModal } from "~/components/modals/CreateWorkspaceModal";
 import { Icon } from "~/components/Icon";
-import type { AuthedProps } from "~/server/api/trpc";
-import { requireAuthSSP as getServerSideProps } from "~/server/api/trpc";
+import type { AuthedProps } from "~/auth";
+import { requireAuthSSP as getServerSideProps } from "~/auth";
 
 export { getServerSideProps };
 

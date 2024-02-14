@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { lucia } from "~/auth";
-import { validateRequest } from "~/server/api/trpc";
+import { lucia, validateRequest } from "~/auth";
 
 export default async function handler(
   req: NextApiRequest,

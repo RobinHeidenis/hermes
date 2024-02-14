@@ -36,8 +36,8 @@ import { openCreateListModal } from "~/components/modals/CreateListModal";
 import { openCreateLoyaltyCardModal } from "~/components/modals/CreateLoyaltyCardModal";
 import { Icon } from "~/components/Icon";
 import Link from "next/link";
-import type { AuthedProps } from "~/server/api/trpc";
-import { requireAuthSSP as getServerSideProps } from "~/server/api/trpc";
+import type { AuthedProps } from "~/auth";
+import { requireAuthSSP as getServerSideProps } from "~/auth";
 
 export { getServerSideProps };
 
