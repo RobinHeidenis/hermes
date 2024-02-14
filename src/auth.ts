@@ -9,9 +9,9 @@ import { users } from "~/server/db/schema";
 const adapter = new DrizzlePostgreSQLAdapter(db, sessions, users);
 
 export const discord = new Discord(
-  process.env.DISCORD_CLIENT_ID!,
-  process.env.DISCORD_CLIENT_SECRET!,
-  `http://localhost:3000/api/login/discord/callback`,
+  env.DISCORD_CLIENT_ID,
+  env.DISCORD_CLIENT_SECRET,
+  `${env.NODE_ENV === "production" ? "https" : "http"}://${env.VERCEL_URL}/api/auth/discord/callback`,
 );
 
 export const lucia = new Lucia(adapter, {

@@ -129,7 +129,7 @@ export const WorkspaceDetailPage = ({ user }: AuthedProps) => {
               variant={"transparent"}
               className={"ml-3"}
               size={"lg"}
-              onClick={() => openWorkspaceSettingsModal({ workspaceId })}
+              onClick={() => openWorkspaceSettingsModal({ workspaceId, user })}
             >
               <SettingsIcon className={"h-5 w-5"} />
             </ActionIcon>

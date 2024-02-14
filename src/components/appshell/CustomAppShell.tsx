@@ -5,6 +5,7 @@ import {
   Group,
   Image,
   Menu,
+  NavLink,
   Text,
   Title,
   UnstyledButton,
@@ -27,6 +28,7 @@ import Link from "next/link";
 import { useDisclosure } from "@mantine/hooks";
 import { Icon } from "~/components/Icon";
 import type { User } from "lucia";
+import { SignOutForm } from "~/components/navigation/SignOutForm";
 
 const AppLogo = () => {
   const isFirefox =
@@ -53,7 +55,7 @@ export const CustomAppShell = ({
   user,
 }: PropsWithChildren<{ user: User | null }>) => {
   const { white } = useMantineTheme();
-  const { pathname, asPath, query, push } = useRouter();
+  const { pathname, asPath, query } = useRouter();
   const [opened, { toggle }] = useDisclosure();
   const { data: defaultWorkspace } = api.user.getDefaultWorkspace.useQuery(
     undefined,
@@ -164,18 +166,7 @@ export const CustomAppShell = ({
                 )}
               />
               <Menu.Divider />
-              <form
-                method={"post"}
-                action={"/api/logout"}
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  const formElement = e.target as HTMLFormElement;
-                  await fetch(formElement.action, {
-                    method: formElement.method,
-                  });
-                  void push("/login");
-                }}
-              >
+              <SignOutForm>
                 <Menu.Item
                   color="red"
                   leftSection={<LogOutIcon className={"h-4 w-4"} />}
@@ -184,7 +175,7 @@ export const CustomAppShell = ({
                 >
                   Sign out
                 </Menu.Item>
-              </form>
+              </SignOutForm>
             </Menu.Dropdown>
           </Menu>
         )}
@@ -261,14 +252,17 @@ export const CustomAppShell = ({
           />
         </AppShell.Section>
         <AppShell.Footer>
-          <NextNavLink
-            href={"/api/auth/logout"}
-            className={
-              "text-red-500 hover:bg-[--mantine-color-red-light-hover]"
-            }
-            label={"Sign out"}
-            leftSection={<LogOutIcon className={"h-4 w-4"} />}
-          />
+          <SignOutForm>
+            <NavLink
+              leftSection={<LogOutIcon className={"h-4 w-4"} />}
+              label={"Sign out"}
+              component={"button"}
+              className={
+                "text-red-500 hover:bg-[--mantine-color-red-light-hover]"
+              }
+              type={"submit"}
+            />
+          </SignOutForm>
         </AppShell.Footer>
       </AppShell.Navbar>
 

@@ -31,6 +31,7 @@ export const ListPage = ({ user }: AuthedProps) => {
           <div className={"w-full sm:w-2/3 md:w-1/2 3xl:w-1/4"}>
             <ListPageContent
               list={list}
+              user={user}
               isReordering={isReordering}
               setIsReordering={setIsReordering}
             />

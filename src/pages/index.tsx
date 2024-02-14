@@ -1,11 +1,28 @@
 import Head from "next/head";
 
 import { Button, Title } from "@mantine/core";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+  InferGetServerSidePropsType,
+} from "next";
+import type { User } from "lucia";
+import { validateRequest } from "~/server/api/trpc";
+import { SignOutForm } from "~/components/navigation/SignOutForm";
 
-export default function Home() {
-  const { user } = useUser();
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<{ user: User | null }>> => {
+  const { user } = await validateRequest({
+    req: context.req,
+    res: context.res,
+  });
+  return { props: { user } };
+};
 
+export default function Home({
+  user,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
       <Head>
@@ -19,13 +36,12 @@ export default function Home() {
         {user ? (
           <>
             <Title>Welcome {user.name}</Title>
-            {user.sub}
-            <Button component={"a"} href={"api/auth/logout"}>
-              Logout
-            </Button>
+            <SignOutForm>
+              <Button type={"submit"}>Logout</Button>
+            </SignOutForm>
           </>
         ) : (
-          <Button component={"a"} href={"api/auth/login?returnTo=/workspace"}>
+          <Button component={"a"} href={"/login"}>
             Login
           </Button>
         )}
