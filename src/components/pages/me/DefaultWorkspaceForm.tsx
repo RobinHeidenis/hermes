@@ -53,7 +53,7 @@ export const DefaultWorkspaceForm = ({
         ]}
       />
       <Button
-        className={"mt-5 w-24 self-end"}
+        className={"mt-5 w-32 self-end"}
         leftSection={
           isLoading ? <Loader color={"white"} size={"xs"} /> : <CheckIcon />
         }

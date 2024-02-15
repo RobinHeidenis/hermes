@@ -1,37 +1,46 @@
 import { useRouter } from "next/router";
+import { api } from "~/utils/api";
+import { useForm, zodResolver } from "@mantine/form";
+import { loginSchema } from "~/schemas/login";
 
 export default function Page() {
   const router = useRouter();
+  const { mutate } = api.auth.login.useMutation({
+    onSuccess: () => {
+      void router.push("/workspace");
+    },
+  });
+  const form = useForm({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    validate: zodResolver(loginSchema),
+  });
 
   return (
     <>
       <h1>Sign in</h1>
       <a href={"/api/auth/discord"}>Sign in with Discord</a>
       <form
-        method={"POST"}
-        action={"/api/auth/login"}
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const formElement = e.target as HTMLFormElement;
-          const response = await fetch(formElement.action, {
-            method: formElement.method,
-            body: JSON.stringify(
-              Object.fromEntries(new FormData(formElement).entries()),
-            ),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          if (response.ok) {
-            void router.push("/workspace");
-          }
-        }}
+        onSubmit={form.onSubmit((values) => {
+          mutate(values);
+        })}
       >
         <label htmlFor="username">Username</label>
-        <input name="username" id="username" />
+        <input
+          name="username"
+          id="username"
+          {...form.getInputProps("username")}
+        />
         <br />
         <label htmlFor="password">Password</label>
-        <input type="password" name="password" id="password" />
+        <input
+          type="password"
+          name="password"
+          id="password"
+          {...form.getInputProps("password")}
+        />
         <br />
         <button type={"submit"}>Continue</button>
       </form>
