@@ -26,6 +26,16 @@ export default async function handler(
   const storedState = req.cookies.discord_oauth_state ?? null;
   if (!code || !state || !storedState || state !== storedState) {
     console.log(code, state, storedState);
+    const error = req.query.error as string | undefined;
+    if (error) {
+      console.error(error, req.query.error_description);
+      res
+        .redirect(
+          `/auth/login?error=${error === "access_denied" ? encodeURIComponent("User cancelled the login attempt") : encodeURIComponent("Something went wrong logging you in with Discord")}`,
+        )
+        .end();
+      return;
+    }
     res.status(400).end();
     return;
   }

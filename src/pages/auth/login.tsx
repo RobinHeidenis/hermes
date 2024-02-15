@@ -43,6 +43,7 @@ export default function Page() {
         />
         <Title order={2}>Welcome</Title>
         <Text>Sign in to Hermes to continue</Text>
+
         <Button
           component={"a"}
           className={"mt-5 flex justify-center"}
@@ -56,6 +57,9 @@ export default function Page() {
         >
           Sign in with Discord
         </Button>
+        <Text c={"red"} className={"mt-2"}>
+          {router.query.error ?? ""}
+        </Text>
         <Divider className={"mb-3 mt-5 w-full"} label={"OR"} color={"gray.6"} />
         <form
           onSubmit={form.onSubmit((values) => {
