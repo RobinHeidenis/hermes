@@ -14,6 +14,7 @@ import {
   Title,
 } from "@mantine/core";
 import { LockIcon, LogInIcon, UserIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function Page() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export default function Page() {
   });
 
   return (
-    <div className={"flex h-screen items-center justify-center"}>
+    <div className={"flex h-dvh items-center justify-center"}>
       <Card className={"flex w-96 flex-col items-center pb-12"} withBorder>
         <Image
           src={"/logo.png"}
@@ -87,12 +88,18 @@ export default function Page() {
             Sign in
           </Button>
         </form>
+        <Link href={"/auth/signup"} className={"ml-14 mt-3 self-start"}>
+          <Text size={"xs"}>Don&apos;t have an account yet? </Text>
+          <Text size={"xs"} c={"blue"}>
+            Create an account
+          </Text>
+        </Link>
       </Card>
     </div>
   );
 }
 
-const DiscordIcon = () => (
+export const DiscordIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36">
     <path
       fill="#fff"
