@@ -42,13 +42,12 @@ const InvitePage = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { invite } = router.query;
-  const { data, isLoading, isLoadingError, error } =
-    api.invite.getInvite.useQuery(
-      {
-        inviteId: invite as string,
-      },
-      { enabled: !!invite && !!user, retry: false },
-    );
+  const { data, isLoading, isLoadingError } = api.invite.getInvite.useQuery(
+    {
+      inviteId: invite as string,
+    },
+    { enabled: !!invite && !!user, retry: false },
+  );
   const { mutate, isLoading: isAcceptInviteLoading } =
     api.invite.acceptInvite.useMutation({
       onError: (e) => {
