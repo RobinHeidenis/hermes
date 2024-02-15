@@ -29,6 +29,7 @@ export const lucia = new Lucia(adapter, {
   getUserAttributes: (attributes) => {
     return {
       discordId: attributes.discord_id,
+      username: attributes.username,
       name: attributes.name,
       email: attributes.email,
       image: attributes.image,
@@ -45,6 +46,7 @@ declare module "lucia" {
 
 interface DatabaseUserAttributes {
   discord_id: number;
+  username: string | null;
   name: string;
   email: string;
   image: string;
@@ -94,7 +96,7 @@ export const requireAuthSSP = async (
     return {
       redirect: {
         permanent: false,
-        destination: "/login",
+        destination: "/auth/login",
       },
     };
   }

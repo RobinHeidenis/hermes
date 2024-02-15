@@ -102,7 +102,7 @@ const InvitePage = ({
               <Button
                 className={"mt-5 w-32"}
                 component={"a"}
-                href={`/login?returnTo=${router.asPath}`}
+                href={`/auth/login?returnTo=${router.asPath}`}
               >
                 Log in
               </Button>

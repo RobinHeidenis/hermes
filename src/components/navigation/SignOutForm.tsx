@@ -14,7 +14,7 @@ export const SignOutForm = ({ children }: PropsWithChildren) => {
         await fetch(formElement.action, {
           method: formElement.method,
         });
-        void push("/login");
+        void push("/auth/login");
       }}
     >
       {children}

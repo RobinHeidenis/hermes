@@ -41,7 +41,7 @@ export default function Home({
             </SignOutForm>
           </>
         ) : (
-          <Button component={"a"} href={"/login"}>
+          <Button component={"a"} href={"/auth/login"}>
             Login
           </Button>
         )}

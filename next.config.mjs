@@ -20,6 +20,10 @@ const config = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "cdn.discordapp.com" }],
   },
+  webpack: (config) => {
+    config.externals.push('@node-rs/argon2', '@node-rs/bcrypt');
+    return config;
+  }
 };
 
 export default config;
