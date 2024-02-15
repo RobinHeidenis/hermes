@@ -14,7 +14,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "^3.5.0",
     "@formkit/auto-animate": "^0.8.1",
     "@hello-pangea/dnd": "^16.5.0",
     "@lucia-auth/adapter-drizzle": "^1.0.1",
@@ -36,7 +35,6 @@
     "@types/dom-view-transitions": "^1.0.4",
     "@types/object.groupby": "^1.0.3",
     "arctic": "^1.1.4",
-    "auth0": "^4.3.0",
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.29.3",
     "lucia": "^3.0.1",
