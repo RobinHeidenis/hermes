@@ -13,11 +13,14 @@ import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { openCreateExpenseModal } from "~/components/modals/CreateExpenseModal";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { useCalculateExpenseTotals } from "~/hooks/useCalculateExpenseTotals";
 import { OverviewCard } from "~/components/pages/expenses/OverviewCard";
 import { useHotkeys } from "@mantine/hooks";
 import { ExpenseCard } from "~/components/pages/expenses/ExpenseCard";
+import type { AuthedProps } from "~/auth";
+import { requireAuthSSP as getServerSideProps } from "~/auth";
+
+export { getServerSideProps };
 
 dayjs.extend(relativeTime);
 
@@ -32,7 +35,7 @@ type Period =
   | "6-months"
   | "1-year";
 
-export const ExpensesPage = withPageAuthRequired(() => {
+export const ExpensesPage = ({ user }: AuthedProps) => {
   const { query, replace } = useRouter();
   const page = parseInt((query.page as string) ?? "0");
 
@@ -78,7 +81,7 @@ export const ExpensesPage = withPageAuthRequired(() => {
   ]);
 
   return (
-    <CustomAppShell>
+    <CustomAppShell user={user}>
       <Affix position={{ bottom: 20, right: 20 }}>
         <ActionIcon size="xl" radius={"xl"} onClick={openCreateExpenseModal}>
           <PlusIcon />
@@ -250,6 +253,6 @@ export const ExpensesPage = withPageAuthRequired(() => {
       </div>
     </CustomAppShell>
   );
-});
+};
 
 export default ExpensesPage;

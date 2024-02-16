@@ -89,6 +89,10 @@ The project uses the following technologies:
 
 #### Secured by:
 
+Currently: <br/>
+[![Lucia](https://img.shields.io/badge/Lucia-%237357ff.svg?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAB/klEQVR4nKzV/08ScRjA8fdRydKt5UZrUa3YapW1lRXVMv0/8webrdr6A1y/tFlyiOjGFw+RElxEX0iMizOyyX1pz3FDmjJBvH3GnufD3YuHz91zn+OO43AUh+/AM2rb6H+OAprPo+b7hmyI5Ih8wLb7g7Kf2dTRa2il/qA5DUwUk/fZPqCqgZYXRTFZ+UTFOCw0r+E0uDDM5QA0UFcOBdk20YTUMnGL8ZtgEctgWb1DmY/UdPw+HowQvsbgMQyDVKF3SF2SZQ7f4KQf/wAPr0uqpnuEqjqrWfd/3fNmJkYlzRWo6L1AakyWORTkYtCbCZ7hynkpai7RNWSaLETlmrGwpGvr5NwWGXeLWkjQMLuDtDRbOoMnuHuHapWpaZ69YPMnoyMMDVDfIrnfw7kPFH0nvxx2V2dykt+/qNd4OiX3/tFt+UqNdwFVyqxl5OzHT3g5zbei2yIW5a88f8XYfYkL63zfOAiKzaI0CIVYTZOOe42GO7QUySRXL8lMdE9R/0Fmg6VZeYiHTzPz2lNaA5M3M5wakmBxkZ2dztBynLqB4qDF5fZ7tVhe0Pxcdvtm2yCR6gzF30ruA9sUTog2pRlYf71AjXSAyiWKOQ9qDcVuU6xdTjEpFii1ve2U1i6ib/DjiwStXaV9e3EUUJpX7AZnzxEI7IH6PP4FAAD//95W9ZuRzsYBAAAAAElFTkSuQmCC)](https://lucia-auth.com)
+
+Previously: <br/>
 [![Auth0](https://img.shields.io/badge/Auth0-%23EB5424.svg?style=for-the-badge&logo=auth0&logoColor=white)](https://auth0.com/)
 
 #### Database:

@@ -6,14 +6,17 @@ import { api } from "~/utils/api";
 import { SkeletonWorkspaceCard } from "~/components/pages/workspace/SkeletonWorkspaceCard";
 import type { ComponentType, ReactNode } from "react";
 import { openCreateWorkspaceModal } from "~/components/modals/CreateWorkspaceModal";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Icon } from "~/components/Icon";
+import type { AuthedProps } from "~/auth";
+import { requireAuthSSP as getServerSideProps } from "~/auth";
 
-export const WorkspaceIndex = withPageAuthRequired(() => {
+export { getServerSideProps };
+
+export const WorkspaceIndex = ({ user }: AuthedProps) => {
   const { data, isLoading } = api.workspace.getWorkspaces.useQuery();
 
   return (
-    <CustomAppShell>
+    <CustomAppShell user={user}>
       <div className={"flex items-center justify-between"}>
         <div>
           <Text c={"dimmed"}>Overview</Text>
@@ -84,7 +87,7 @@ export const WorkspaceIndex = withPageAuthRequired(() => {
       </Flex>
     </CustomAppShell>
   );
-});
+};
 
 interface ArrayDataDisplayProps<T extends Array<{ id: string }>, R> {
   skeleton: ReactNode;

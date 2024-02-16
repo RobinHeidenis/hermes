@@ -8,7 +8,6 @@ import "~/styles/globals.css";
 import { createTheme, MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { UserProvider } from "@auth0/nextjs-auth0/client";
 import { Notifications } from "@mantine/notifications";
 import { useRouter } from "next/router";
 import { useNextRouterViewTransitions } from "~/hooks/useViewTransitions";
@@ -29,15 +28,13 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   useNextRouterViewTransitions(router);
 
   return (
-    <UserProvider>
-      <MantineProvider theme={theme} defaultColorScheme={"dark"}>
-        <Notifications />
-        <ModalsProvider>
-          <Component {...pageProps} />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </ModalsProvider>
-      </MantineProvider>
-    </UserProvider>
+    <MantineProvider theme={theme} defaultColorScheme={"dark"}>
+      <Notifications />
+      <ModalsProvider>
+        <Component {...pageProps} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </ModalsProvider>
+    </MantineProvider>
   );
 };
 

@@ -18,7 +18,7 @@ import {
 } from "@mantine/core";
 import {
   CheckIcon,
-  ClipboardEditIcon,
+  ClipboardIcon,
   LogOutIcon,
   PlusIcon,
   RefreshCcwIcon,
@@ -30,10 +30,15 @@ import { api } from "~/utils/api";
 import { useForm, zodResolver } from "@mantine/form";
 import { listSettingSchema } from "~/schemas/listSettings";
 import { useRouter } from "next/router";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import type { User } from "lucia";
 
-const WorkspaceSettingsModal = ({ workspaceId }: { workspaceId: string }) => {
-  const { user } = useUser();
+const WorkspaceSettingsModal = ({
+  workspaceId,
+  user,
+}: {
+  workspaceId: string;
+  user: User;
+}) => {
   const { data: workspace } = api.workspace.getWorkspace.useQuery({
     workspaceId,
   });
@@ -43,7 +48,7 @@ const WorkspaceSettingsModal = ({ workspaceId }: { workspaceId: string }) => {
         <LoadingOverlay visible />
       </div>
     );
-  const currentUserIsOwner = user?.sub === workspace.users.owner.id;
+  const currentUserIsOwner = user.id === workspace.users.owner.id;
 
   return (
     <div className={"flex flex-col"}>
@@ -57,6 +62,7 @@ const WorkspaceSettingsModal = ({ workspaceId }: { workspaceId: string }) => {
       )}
       <ListUsersSection
         users={workspace.users}
+        user={user}
         currentUserIsOwner={currentUserIsOwner}
         workspaceId={workspace.id}
       />
@@ -74,12 +80,14 @@ const WorkspaceSettingsModal = ({ workspaceId }: { workspaceId: string }) => {
 
 export const openWorkspaceSettingsModal = ({
   workspaceId,
+  user,
 }: {
   workspaceId: string;
+  user: User;
 }) => {
   modals.open({
     title: "Workspace settings",
-    children: <WorkspaceSettingsModal workspaceId={workspaceId} />,
+    children: <WorkspaceSettingsModal workspaceId={workspaceId} user={user} />,
   });
 };
 
@@ -168,15 +176,14 @@ const SettingsForm = ({
 const ListUsersSection = ({
   users,
   currentUserIsOwner,
+  user,
   workspaceId,
 }: {
   users: RouterOutputs["workspace"]["getWorkspace"]["users"];
+  user: User;
   currentUserIsOwner?: boolean;
   workspaceId: string;
 }) => {
-  const { user } = useUser();
-  const userId = user?.sub;
-
   return (
     <>
       <Title order={5}>Users in this list</Title>
@@ -191,7 +198,7 @@ const ListUsersSection = ({
         <ListUserCard
           user={contributor}
           key={contributor.id}
-          isCurrentUser={userId === contributor.id}
+          isCurrentUser={user.id === contributor.id}
           isDeletable={currentUserIsOwner}
           workspaceId={workspaceId}
         />
@@ -378,7 +385,7 @@ export const WorkspaceInvitesSection = ({
                       {copied ? (
                         <CheckIcon className={"h-4 w-4"} />
                       ) : (
-                        <ClipboardEditIcon className={"h-4 w-4"} />
+                        <ClipboardIcon className={"h-4 w-4"} />
                       )}
                     </ActionIcon>
                   )}

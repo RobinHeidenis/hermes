@@ -1,11 +1,14 @@
 import Head from "next/head";
 
 import { Button, Title } from "@mantine/core";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import type { PublicProps } from "~/auth";
+import { allowPublicSSP as getServerSideProps } from "~/auth";
+import { SignOutForm } from "~/components/navigation/SignOutForm";
+import Link from "next/link";
 
-export default function Home() {
-  const { user } = useUser();
+export { getServerSideProps };
 
+export default function Home({ user }: PublicProps) {
   return (
     <>
       <Head>
@@ -19,13 +22,17 @@ export default function Home() {
         {user ? (
           <>
             <Title>Welcome {user.name}</Title>
-            {user.sub}
-            <Button component={"a"} href={"api/auth/logout"}>
-              Logout
+            <Button component={Link} href={"/workspace"} className={"mb-3"}>
+              Workspaces
             </Button>
+            <SignOutForm>
+              <Button type={"submit"} bg={"red"}>
+                Logout
+              </Button>
+            </SignOutForm>
           </>
         ) : (
-          <Button component={"a"} href={"api/auth/login?returnTo=/workspace"}>
+          <Button component={"a"} href={"/auth/login"}>
             Login
           </Button>
         )}

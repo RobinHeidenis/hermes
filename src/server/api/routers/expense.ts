@@ -37,10 +37,8 @@ export const expenseRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== workspace.ownerId &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id !== workspace.ownerId &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -109,10 +107,8 @@ export const expenseRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== workspace.ownerId &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id !== workspace.ownerId &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -162,10 +158,8 @@ export const expenseRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== workspace.ownerId &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id !== workspace.ownerId &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -211,10 +205,8 @@ export const expenseRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== workspace.ownerId &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id !== workspace.ownerId &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -253,9 +245,9 @@ export const expenseRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== receipt.workspace.ownerId &&
+        ctx.user.id !== receipt.workspace.ownerId &&
         !receipt.workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
+          (r) => r.userId === ctx.user.id,
         )
       )
         throw new TRPCError({
@@ -300,10 +292,8 @@ export const expenseRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== workspace.ownerId &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id !== workspace.ownerId &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -347,9 +337,9 @@ export const expenseRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id !== receipt.workspace.ownerId &&
+        ctx.user.id !== receipt.workspace.ownerId &&
         !receipt.workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
+          (r) => r.userId === ctx.user.id,
         )
       )
         throw new TRPCError({

@@ -7,9 +7,12 @@ import { PlusIcon } from "lucide-react";
 import { openCreateListItemModal } from "~/components/modals/CreateListItemModal";
 import { ListPageContent } from "~/components/pages/list/ListPageContent";
 import { useState } from "react";
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import type { AuthedProps } from "~/auth";
+import { requireAuthSSP as getServerSideProps } from "~/auth";
 
-export const ListPage = withPageAuthRequired(() => {
+export { getServerSideProps };
+
+export const ListPage = ({ user }: AuthedProps) => {
   const { query } = useRouter();
   const [isReordering, setIsReordering] = useState(false);
   const { data: list } = api.list.getList.useQuery(
@@ -19,7 +22,7 @@ export const ListPage = withPageAuthRequired(() => {
 
   return (
     <>
-      <CustomAppShell>
+      <CustomAppShell user={user}>
         <div
           className={
             "flex w-full items-center justify-between sm:justify-center"
@@ -28,6 +31,7 @@ export const ListPage = withPageAuthRequired(() => {
           <div className={"w-full sm:w-2/3 md:w-1/2 3xl:w-1/4"}>
             <ListPageContent
               list={list}
+              user={user}
               isReordering={isReordering}
               setIsReordering={setIsReordering}
             />
@@ -48,6 +52,6 @@ export const ListPage = withPageAuthRequired(() => {
       )}
     </>
   );
-});
+};
 
 export default ListPage;

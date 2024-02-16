@@ -26,10 +26,8 @@ export const loyaltyCardRouter = createTRPCRouter({
       }
 
       if (
-        workspace.ownerId !== ctx.session.user.id &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        workspace.ownerId !== ctx.user.id &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       ) {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -67,10 +65,8 @@ export const loyaltyCardRouter = createTRPCRouter({
       }
 
       if (
-        workspace.ownerId !== ctx.session.user.id &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        workspace.ownerId !== ctx.user.id &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       ) {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -118,10 +114,8 @@ export const loyaltyCardRouter = createTRPCRouter({
       }
 
       if (
-        workspace.ownerId !== ctx.session.user.id &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        workspace.ownerId !== ctx.user.id &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       ) {
         throw new TRPCError({
           code: "FORBIDDEN",

@@ -7,3 +7,4 @@ export * from "./users";
 export * from "./usersToWorkspaces";
 export * from "./workspaces";
 export * from "./loyaltyCards";
+export * from "./sessions";

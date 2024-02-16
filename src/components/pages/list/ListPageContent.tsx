@@ -21,23 +21,24 @@ import { useForceUpdate } from "@mantine/hooks";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { UnifiedList } from "~/components/pages/list/UnifiedList";
 import { ListMenu } from "~/components/pages/list/ListMenu";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import { useRouter } from "next/router";
 import { openLoyaltyCardModal } from "~/components/modals/LoyaltyCardModal";
 import { modals } from "@mantine/modals";
+import type { User } from "lucia";
 
 export const ListPageContent = ({
   list,
   isReordering,
   setIsReordering,
+  user,
 }: {
   list: RouterOutputs["list"]["getList"] | undefined;
   isReordering: boolean;
   setIsReordering: (isReordering: boolean) => void;
+  user: User;
 }) => {
   const router = useRouter();
   const utils = api.useUtils();
-  const { user } = useUser();
 
   const [updateAmount, setUpdateAmount] = useState(0);
   const forceUpdate = useForceUpdate();
@@ -156,7 +157,7 @@ export const ListPageContent = ({
               items={list.items.length > 0}
               checkedItems={list.items.filter((i) => i.checked).length > 0}
               workspaceId={list.workspaceId}
-              currentUserIsOwner={user?.sub === list.workspace.ownerId}
+              currentUserIsOwner={user.id === list.workspace.ownerId}
               setIsReordering={setIsReordering}
             />
           ) : (

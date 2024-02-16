@@ -24,10 +24,8 @@ export const inviteRouter = createTRPCRouter({
       }
 
       if (
-        workspace.ownerId !== ctx.session.user.id &&
-        !workspace.usersToWorkspaces.find(
-          (u) => u.userId === ctx.session.user.id,
-        )
+        workspace.ownerId !== ctx.user.id &&
+        !workspace.usersToWorkspaces.find((u) => u.userId === ctx.user.id)
       ) {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -82,9 +80,9 @@ export const inviteRouter = createTRPCRouter({
         });
 
       if (
-        invite.workspace.owner.id === ctx.session.user.id ||
+        invite.workspace.owner.id === ctx.user.id ||
         invite.workspace.usersToWorkspaces.find(
-          (r) => r.user.id === ctx.session.user.id,
+          (r) => r.user.id === ctx.user.id,
         )
       ) {
         return {
@@ -127,10 +125,8 @@ export const inviteRouter = createTRPCRouter({
         });
 
       if (
-        ctx.session.user.id === invite.workspace.ownerId ||
-        invite.workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        ctx.user.id === invite.workspace.ownerId ||
+        invite.workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "CONFLICT",
@@ -141,7 +137,7 @@ export const inviteRouter = createTRPCRouter({
         .insert(usersToWorkspaces)
         .values({
           workspaceId: invite.workspaceId,
-          userId: ctx.session.user.id,
+          userId: ctx.user.id,
         })
         .returning({ workspaceId: usersToWorkspaces.workspaceId });
     }),
@@ -165,10 +161,8 @@ export const inviteRouter = createTRPCRouter({
         });
 
       if (
-        workspace.ownerId !== ctx.session.user.id &&
-        !workspace.usersToWorkspaces.find(
-          (r) => r.userId === ctx.session.user.id,
-        )
+        workspace.ownerId !== ctx.user.id &&
+        !workspace.usersToWorkspaces.find((r) => r.userId === ctx.user.id)
       )
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -206,7 +200,7 @@ export const inviteRouter = createTRPCRouter({
         });
       }
 
-      if (ctx.session.user.id !== invite.workspace.ownerId) {
+      if (ctx.user.id !== invite.workspace.ownerId) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You're not allowed to delete that invite",
@@ -233,7 +227,7 @@ export const inviteRouter = createTRPCRouter({
           message: "That invite was not found",
         });
 
-      if (ctx.session.user.id !== invite.workspace.ownerId)
+      if (ctx.user.id !== invite.workspace.ownerId)
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You're not allowed to regenerate that invite",

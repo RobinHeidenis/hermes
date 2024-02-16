@@ -2,19 +2,14 @@ import { Button, Image, Loader, TextInput } from "@mantine/core";
 import { AtSignIcon, CheckIcon, UserIcon } from "lucide-react";
 import { useUserFormContext } from "./updateUserFormContext";
 import { api } from "~/utils/api";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useRouter } from "next/router";
 
 export const UserForm = ({ image }: { image: string | null | undefined }) => {
-  const { checkSession, user } = useUser();
   const form = useUserFormContext();
+  const { reload } = useRouter();
   const { mutate, isLoading } = api.user.updateUser.useMutation({
-    onSuccess: async () => {
-      form.setInitialValues({
-        email: form.values.email,
-        name: form.values.name,
-      });
-
-      await checkSession();
+    onSuccess: () => {
+      reload();
     },
   });
 
@@ -42,11 +37,10 @@ export const UserForm = ({ image }: { image: string | null | undefined }) => {
         leftSectionPointerEvents={"none"}
         leftSection={<AtSignIcon className={"h-4 w-4"} />}
         className={"mt-2"}
-        disabled={user?.sub?.includes("discord|")}
         {...form.getInputProps("email")}
       />
       <Button
-        className={"mt-5 w-24 self-end"}
+        className={"mt-5 w-32 self-end"}
         leftSection={
           isLoading ? <Loader color={"white"} size={"xs"} /> : <CheckIcon />
         }

@@ -5,6 +5,7 @@ import {
   Group,
   Image,
   Menu,
+  NavLink,
   Text,
   Title,
   UnstyledButton,
@@ -24,9 +25,10 @@ import { NextNavLink } from "~/components/navigation/NextNavLink";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import Link from "next/link";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import { useDisclosure } from "@mantine/hooks";
 import { Icon } from "~/components/Icon";
+import type { User } from "lucia";
+import { SignOutForm } from "~/components/navigation/SignOutForm";
 
 const AppLogo = () => {
   const isFirefox =
@@ -48,8 +50,10 @@ const AppLogo = () => {
   );
 };
 
-export const CustomAppShell = ({ children }: PropsWithChildren) => {
-  const { user } = useUser();
+export const CustomAppShell = ({
+  children,
+  user,
+}: PropsWithChildren<{ user: User | null }>) => {
   const { white } = useMantineTheme();
   const { pathname, asPath, query } = useRouter();
   const [opened, { toggle }] = useDisclosure();
@@ -125,7 +129,7 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
               <UnstyledButton
                 className={`mr-5 flex items-center rounded-md p-2 hover:bg-[--mantine-color-default-hover]`}
               >
-                <Avatar src={user.picture} />
+                <Avatar src={user.image} />
                 <Text visibleFrom={"sm"} className={"ml-3"}>
                   {user.name}
                 </Text>
@@ -134,7 +138,7 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
 
             <Menu.Dropdown>
               <Menu.Label className={"flex items-center"}>
-                <Avatar src={user.picture} className={"mr-3"} />
+                <Avatar src={user.image} className={"mr-3"} />
                 <div>
                   <Text c={white}>{user.name}</Text>
                   {user.email}
@@ -162,14 +166,16 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
                 )}
               />
               <Menu.Divider />
-              <Menu.Item
-                color="red"
-                leftSection={<LogOutIcon className={"h-4 w-4"} />}
-                href={"/api/auth/logout"}
-                component={"a"}
-              >
-                Sign out
-              </Menu.Item>
+              <SignOutForm>
+                <Menu.Item
+                  color="red"
+                  leftSection={<LogOutIcon className={"h-4 w-4"} />}
+                  component={"button"}
+                  type={"submit"}
+                >
+                  Sign out
+                </Menu.Item>
+              </SignOutForm>
             </Menu.Dropdown>
           </Menu>
         )}
@@ -188,7 +194,7 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
             onClick={toggle}
           >
             <Group>
-              <Avatar src={user?.picture} radius={"xl"} />
+              <Avatar src={user?.image} radius={"xl"} />
               <div className={"flex flex-col"}>
                 <Text size="md" fw={500}>
                   {user?.name}
@@ -246,14 +252,17 @@ export const CustomAppShell = ({ children }: PropsWithChildren) => {
           />
         </AppShell.Section>
         <AppShell.Footer>
-          <NextNavLink
-            href={"/api/auth/logout"}
-            className={
-              "text-red-500 hover:bg-[--mantine-color-red-light-hover]"
-            }
-            label={"Sign out"}
-            leftSection={<LogOutIcon className={"h-4 w-4"} />}
-          />
+          <SignOutForm>
+            <NavLink
+              leftSection={<LogOutIcon className={"h-4 w-4"} />}
+              label={"Sign out"}
+              component={"button"}
+              className={
+                "text-red-500 hover:bg-[--mantine-color-red-light-hover]"
+              }
+              type={"submit"}
+            />
+          </SignOutForm>
         </AppShell.Footer>
       </AppShell.Navbar>
 

@@ -9,14 +9,14 @@ import {
 import { UserCardPreview } from "./UserCardPreview";
 import { DefaultWorkspaceCard } from "./DefaultWorkspaceCard";
 import type { RouterOutputs } from "~/utils/api";
-import type { UserProfile } from "@auth0/nextjs-auth0/client";
+import type { User } from "lucia";
 
 export const ProfilePageContent = ({
   user,
   defaultWorkspace,
   workspaces,
 }: {
-  user: UserProfile;
+  user: User;
   defaultWorkspace: RouterOutputs["user"]["getDefaultWorkspace"] | undefined;
   workspaces: RouterOutputs["workspace"]["getWorkspaces"];
 }) => {
@@ -38,7 +38,7 @@ export const ProfilePageContent = ({
         className={"mt-20 sm:mt-0"}
       >
         <Card className={"mt-3 xs:w-72"}>
-          <UserForm image={user.picture} />
+          <UserForm image={user.image} />
         </Card>
       </Grid.Col>
       <Grid.Col span={{ base: 12, sm: 6 }} order={{ base: 1, sm: 2 }}>
