@@ -19,27 +19,12 @@ import { notifications } from "@mantine/notifications";
 import { UserCard } from "~/components/user/UserCard";
 import { StoreIcon, UserPlusIcon } from "lucide-react";
 import { UserAvatar } from "~/components/pages/workspace/UserAvatar";
-import type {
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
-  InferGetServerSidePropsType,
-} from "next";
-import type { User } from "lucia";
-import { validateRequest } from "~/auth";
+import type { PublicProps } from "~/auth";
+import { allowPublicSSP as getServerSideProps } from "~/auth";
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext,
-): Promise<GetServerSidePropsResult<{ user: User | null }>> => {
-  const { user } = await validateRequest({
-    req: context.req,
-    res: context.res,
-  });
-  return { props: { user } };
-};
+export { getServerSideProps };
 
-const InvitePage = ({
-  user,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const InvitePage = ({ user }: PublicProps) => {
   const router = useRouter();
   const { invite } = router.query;
   const { data, isLoading, isLoadingError } = api.invite.getInvite.useQuery(

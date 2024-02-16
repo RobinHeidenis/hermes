@@ -1,28 +1,14 @@
 import Head from "next/head";
 
 import { Button, Title } from "@mantine/core";
-import type {
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
-  InferGetServerSidePropsType,
-} from "next";
-import type { User } from "lucia";
-import { validateRequest } from "~/auth";
+import type { PublicProps } from "~/auth";
+import { allowPublicSSP as getServerSideProps } from "~/auth";
 import { SignOutForm } from "~/components/navigation/SignOutForm";
+import Link from "next/link";
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext,
-): Promise<GetServerSidePropsResult<{ user: User | null }>> => {
-  const { user } = await validateRequest({
-    req: context.req,
-    res: context.res,
-  });
-  return { props: { user } };
-};
+export { getServerSideProps };
 
-export default function Home({
-  user,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ user }: PublicProps) {
   return (
     <>
       <Head>
@@ -36,8 +22,13 @@ export default function Home({
         {user ? (
           <>
             <Title>Welcome {user.name}</Title>
+            <Button component={Link} href={"/workspace"} className={"mb-3"}>
+              Workspaces
+            </Button>
             <SignOutForm>
-              <Button type={"submit"}>Logout</Button>
+              <Button type={"submit"} bg={"red"}>
+                Logout
+              </Button>
             </SignOutForm>
           </>
         ) : (

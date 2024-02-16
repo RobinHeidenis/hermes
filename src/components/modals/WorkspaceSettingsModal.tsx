@@ -18,7 +18,7 @@ import {
 } from "@mantine/core";
 import {
   CheckIcon,
-  ClipboardEditIcon,
+  ClipboardIcon,
   LogOutIcon,
   PlusIcon,
   RefreshCcwIcon,
@@ -385,7 +385,7 @@ export const WorkspaceInvitesSection = ({
                       {copied ? (
                         <CheckIcon className={"h-4 w-4"} />
                       ) : (
-                        <ClipboardEditIcon className={"h-4 w-4"} />
+                        <ClipboardIcon className={"h-4 w-4"} />
                       )}
                     </ActionIcon>
                   )}

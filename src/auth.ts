@@ -81,26 +81,50 @@ export const validateRequest = async ({
   return result;
 };
 
-export const requireAuthSSP = async (
+export function createAuthSSP(
+  requireAuth: true,
+): (
   context: GetServerSidePropsContext,
-): Promise<
-  GetServerSidePropsResult<{
-    user: User;
-  }>
-> => {
-  const { user } = await validateRequest({
-    req: context.req,
-    res: context.res,
-  });
-  if (!user) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/auth/login",
-      },
-    };
-  }
-  return { props: { user } };
-};
+) => Promise<GetServerSidePropsResult<{ user: User }>>;
+export function createAuthSSP(
+  requireAuth: false,
+): (
+  context: GetServerSidePropsContext,
+) => Promise<GetServerSidePropsResult<{ user: User | null }>>;
+export function createAuthSSP(
+  requireAuth: boolean,
+): (
+  context: GetServerSidePropsContext,
+) => Promise<GetServerSidePropsResult<{ user: (User | null) | User }>>;
+export function createAuthSSP(requireAuth = true) {
+  return async (
+    context: GetServerSidePropsContext,
+  ): Promise<
+    GetServerSidePropsResult<{
+      user: typeof requireAuth extends true ? User : User | null;
+    }>
+  > => {
+    const { user } = await validateRequest({
+      req: context.req,
+      res: context.res,
+    });
+    if (requireAuth) {
+      if (!user) {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/auth/login",
+          },
+        };
+      }
+      return { props: { user: user } };
+    }
+    return { props: { user } };
+  };
+}
+
+export const requireAuthSSP = createAuthSSP(true);
+export const allowPublicSSP = createAuthSSP(false);
 
 export type AuthedProps = InferGetServerSidePropsType<typeof requireAuthSSP>;
+export type PublicProps = InferGetServerSidePropsType<typeof allowPublicSSP>;
