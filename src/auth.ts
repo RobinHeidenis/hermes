@@ -113,7 +113,7 @@ export function createAuthSSP(requireAuth = true) {
         return {
           redirect: {
             permanent: false,
-            destination: "/auth/login",
+            destination: `/auth/login?returnTo=${context.req.url}`,
           },
         };
       }

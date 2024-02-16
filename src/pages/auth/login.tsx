@@ -18,9 +18,10 @@ import Link from "next/link";
 
 export default function Page() {
   const router = useRouter();
+  const returnToParam = router.query.returnTo as string | null;
   const { mutate, isLoading } = api.auth.login.useMutation({
     onSuccess: () => {
-      void router.push("/workspace");
+      void router.push(returnToParam ?? "/workspace");
     },
   });
   const form = useForm({
@@ -53,7 +54,7 @@ export default function Page() {
               <DiscordIcon />
             </div>
           }
-          href={"/api/auth/discord"}
+          href={`/api/auth/discord${returnToParam ? `?returnTo=${returnToParam}` : ""}`}
         >
           Sign in with Discord
         </Button>

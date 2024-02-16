@@ -16,16 +16,23 @@ export default async function handler(
   const url = await discord.createAuthorizationURL(state, {
     scopes: ["identify"],
   });
-  res
-    .appendHeader(
+  res.appendHeader(
+    "Set-Cookie",
+    serializeCookie("discord_oauth_state", state, {
+      path: "/",
+      secure: env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 60 * 10,
+      sameSite: "lax",
+    }),
+  );
+
+  if (req.query.returnTo) {
+    res.appendHeader(
       "Set-Cookie",
-      serializeCookie("discord_oauth_state", state, {
-        path: "/",
-        secure: env.NODE_ENV === "production",
-        httpOnly: true,
-        maxAge: 60 * 10,
-        sameSite: "lax",
-      }),
-    )
-    .redirect(url.toString());
+      `return_to=${req.query.returnTo as string}; Max-Age=600; Path=/; SameSite=Lax; HttpOnly`,
+    );
+  }
+
+  res.redirect(url.toString());
 }

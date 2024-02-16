@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { OAuth2RequestError } from "arctic";
 import { users } from "~/server/db/schema";
 import { generateId } from "lucia";
+import dayjs from "dayjs";
 
 interface DiscordUser {
   id: number;
@@ -24,6 +25,7 @@ export default async function handler(
   const code = req.query.code?.toString() ?? null;
   const state = req.query.state?.toString() ?? null;
   const storedState = req.cookies.discord_oauth_state ?? null;
+  const returnTo = req.cookies.return_to ?? null;
   if (!code || !state || !storedState || state !== storedState) {
     console.log(code, state, storedState);
     const error = req.query.error as string | undefined;
@@ -31,7 +33,7 @@ export default async function handler(
       console.error(error, req.query.error_description);
       res
         .redirect(
-          `/auth/login?error=${error === "access_denied" ? encodeURIComponent("User cancelled the login attempt") : encodeURIComponent("Something went wrong logging you in with Discord")}`,
+          `/auth/login?error=${error === "access_denied" ? encodeURIComponent("User cancelled the login attempt") : encodeURIComponent("Something went wrong logging you in with Discord")}${returnTo ? `&returnTo=${returnTo}` : ""}`,
         )
         .end();
       return;
@@ -53,13 +55,22 @@ export default async function handler(
 
     if (existingUser) {
       const session = await lucia.createSession(existingUser.id, {});
-      res
-        .appendHeader(
-          "Set-Cookie",
-          lucia.createSessionCookie(session.id).serialize(),
-        )
-        .redirect("/workspace")
-        .end();
+      res.appendHeader(
+        "Set-Cookie",
+        lucia.createSessionCookie(session.id).serialize(),
+      );
+
+      if (returnTo) {
+        res
+          .appendHeader(
+            "Set-Cookie",
+            `return_to=; Expires=${dayjs().subtract(1, "day").toString()}; Path=/; SameSite=Lax; HttpOnly`,
+          )
+          .redirect(returnTo)
+          .end();
+        return;
+      }
+      res.redirect("/workspace").end();
       return;
     }
 
@@ -72,13 +83,22 @@ export default async function handler(
       image: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
     });
     const session = await lucia.createSession(userId, {});
-    res
-      .appendHeader(
-        "Set-Cookie",
-        lucia.createSessionCookie(session.id).serialize(),
-      )
-      .redirect("/workspace")
-      .end();
+    res.appendHeader(
+      "Set-Cookie",
+      lucia.createSessionCookie(session.id).serialize(),
+    );
+
+    if (returnTo) {
+      res
+        .appendHeader(
+          "Set-Cookie",
+          `return_to=; Expires=${dayjs().subtract(1, "day").toString()}; Path=/; SameSite=Lax; HttpOnly`,
+        )
+        .redirect(returnTo)
+        .end();
+      return;
+    }
+    res.redirect("/workspace").end();
     return;
   } catch (e) {
     if (e instanceof OAuth2RequestError) {
