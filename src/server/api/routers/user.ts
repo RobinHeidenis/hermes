@@ -80,4 +80,77 @@ export const userRouter = createTRPCRouter({
         })
         .where(eq(users.id, ctx.user.id));
     }),
+  getMenuData: protectedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.db.query.users.findFirst({
+      where: eq(users.id, ctx.user.id),
+      columns: {
+        id: true,
+      },
+      with: {
+        ownedWorkspaces: {
+          columns: {
+            id: true,
+            name: true,
+          },
+          with: {
+            lists: {
+              columns: {
+                id: true,
+                name: true,
+              },
+            },
+            loyaltyCards: {
+              columns: {
+                id: true,
+                name: true,
+                store: true,
+                barcode: true,
+                isQR: true,
+              },
+            },
+          },
+        },
+        usersToWorkspaces: {
+          with: {
+            workspace: {
+              columns: {
+                id: true,
+                name: true,
+              },
+              with: {
+                lists: {
+                  columns: {
+                    id: true,
+                    name: true,
+                  },
+                },
+                loyaltyCards: {
+                  columns: {
+                    id: true,
+                    name: true,
+                    store: true,
+                    barcode: true,
+                    isQR: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "That user was not found",
+      });
+
+    return {
+      workspaces: [
+        ...user.ownedWorkspaces,
+        ...user.usersToWorkspaces.map((r) => r.workspace),
+      ],
+    };
+  }),
 });

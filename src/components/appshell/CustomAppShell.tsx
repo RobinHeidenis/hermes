@@ -6,6 +6,7 @@ import {
   Image,
   Menu,
   NavLink,
+  ScrollArea,
   Text,
   Title,
   UnstyledButton,
@@ -13,10 +14,12 @@ import {
 } from "@mantine/core";
 import { type PropsWithChildren } from "react";
 import {
-  ArrowLeftIcon,
+  BarChart3Icon,
   ChevronRight,
+  CreditCardIcon,
   HomeIcon,
   LayoutDashboardIcon,
+  ListTodoIcon,
   LogOutIcon,
   StoreIcon,
   UserIcon,
@@ -29,6 +32,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Icon } from "~/components/Icon";
 import type { User } from "lucia";
 import { SignOutForm } from "~/components/navigation/SignOutForm";
+import { openLoyaltyCardModal } from "~/components/modals/LoyaltyCardModal";
 
 const AppLogo = () => {
   const isFirefox =
@@ -61,6 +65,9 @@ export const CustomAppShell = ({
     undefined,
     { enabled: !!user },
   );
+  const { data: menuData } = api.user.getMenuData.useQuery(undefined, {
+    enabled: !!user,
+  });
 
   return (
     <AppShell
@@ -68,7 +75,7 @@ export const CustomAppShell = ({
       navbar={{
         width: 300,
         breakpoint: "md",
-        collapsed: { desktop: true, mobile: !opened },
+        collapsed: { desktop: false, mobile: !opened },
       }}
       padding="md"
     >
@@ -207,63 +214,99 @@ export const CustomAppShell = ({
             <ChevronRight className={"h-5 w-5 text-gray-400"} />
           </UnstyledButton>
         </AppShell.Section>
-        <AppShell.Section>Where do you want to go?</AppShell.Section>
-        <AppShell.Section onClick={toggle}>
-          {pathname === "/workspace/[workspace]/list/[list]" && (
-            <NextNavLink
-              href={`/workspace/${query.workspace as string}`}
-              label={"Back to the workspace"}
-              leftSection={
-                <Icon
-                  IconComponent={ArrowLeftIcon}
-                  className={"h-4 w-4"}
-                  firefoxMarginClass={"mb-1.5"}
-                />
-              }
-            />
-          )}
-          {defaultWorkspace && (
-            <NextNavLink
-              href={`/workspace/${defaultWorkspace.id}`}
-              pathname={asPath}
-              label={"Default workspace"}
-              className={"rounded-md"}
-              leftSection={
-                <Icon
-                  IconComponent={HomeIcon}
-                  className={"h-4 w-4"}
-                  firefoxMarginClass={"mb-1"}
-                />
-              }
-            />
-          )}
-          <NextNavLink
-            href={"/workspace"}
-            label={"Workspaces"}
-            className={"rounded-md"}
-            pathname={pathname}
-            leftSection={
-              <Icon
-                IconComponent={StoreIcon}
-                className={"h-4 w-4"}
-                firefoxMarginClass={"mb-1"}
-              />
-            }
-          />
+        <AppShell.Section className={"ml-3"}>
+          Where do you want to go?
         </AppShell.Section>
-        <AppShell.Footer>
+        <NextNavLink
+          href={"/workspace"}
+          label={"Workspaces overview"}
+          className={"rounded-md"}
+          pathname={pathname}
+          leftSection={
+            <Icon
+              IconComponent={StoreIcon}
+              className={"h-4 w-4"}
+              firefoxMarginClass={"mb-1"}
+            />
+          }
+        />
+        <AppShell.Section grow component={ScrollArea} className={"mb-10"}>
+          {menuData?.workspaces.map((workspace) => (
+            <NavLink
+              className={"flex items-center rounded-md"}
+              key={`workspace-${workspace.id}`}
+              leftSection={<StoreIcon className={"h-4 w-4"} />}
+              label={workspace.name}
+              defaultOpened={workspace.id === query.workspace}
+              active={workspace.id === query.workspace}
+            >
+              <NextNavLink
+                className={"flex items-center rounded-md"}
+                leftSection={<HomeIcon className={"h-4 w-4"} />}
+                href={`/workspace/${workspace.id}`}
+                label={"Workspace"}
+                onClick={toggle}
+                pathname={asPath}
+              />
+              <Text className={"mb-1 ml-3 mt-2"} size={"sm"} fw={700}>
+                Lists
+              </Text>
+              {workspace.lists.map((list) => (
+                <NextNavLink
+                  key={`list-${list.id}`}
+                  className={"flex items-center rounded-md"}
+                  leftSection={<ListTodoIcon className={"h-4 w-4"} />}
+                  href={`/workspace/${workspace.id}/list/${list.id}`}
+                  label={list.name ?? "list"}
+                  onClick={toggle}
+                  pathname={asPath}
+                />
+              ))}
+              <Text className={"mb-1 ml-3 mt-2"} size={"sm"} fw={700}>
+                Loyalty cards
+              </Text>
+              {workspace.loyaltyCards.map((loyaltyCard) => (
+                <NavLink
+                  key={`loyaltycard-${loyaltyCard.id}`}
+                  className={"flex items-center rounded-md"}
+                  leftSection={<CreditCardIcon className={"h-4 w-4"} />}
+                  label={loyaltyCard.name}
+                  onClick={() => {
+                    toggle();
+                    openLoyaltyCardModal({
+                      card: loyaltyCard,
+                      workspaceId: workspace.id,
+                    });
+                  }}
+                />
+              ))}
+              <Text className={"mb-1 ml-3 mt-2"} size={"sm"} fw={700}>
+                Expenses
+              </Text>
+              <NextNavLink
+                className={"flex items-center rounded-md"}
+                leftSection={<BarChart3Icon className={"h-4 w-4"} />}
+                href={`/workspace/${workspace.id}/expenses`}
+                pathname={asPath}
+                label={"Expense overview"}
+                onClick={toggle}
+              />
+            </NavLink>
+          ))}
+        </AppShell.Section>
+        <AppShell.Section>
           <SignOutForm>
             <NavLink
               leftSection={<LogOutIcon className={"h-4 w-4"} />}
               label={"Sign out"}
               component={"button"}
               className={
-                "text-red-500 hover:bg-[--mantine-color-red-light-hover]"
+                "self-end text-red-500 hover:bg-[--mantine-color-red-light-hover]"
               }
               type={"submit"}
             />
           </SignOutForm>
-        </AppShell.Footer>
+        </AppShell.Section>
       </AppShell.Navbar>
 
       <AppShell.Main>{children}</AppShell.Main>
