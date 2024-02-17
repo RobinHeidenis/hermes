@@ -17,7 +17,7 @@ const adapter = new DrizzlePostgreSQLAdapter(db, sessions, users);
 export const discord = new Discord(
   env.DISCORD_CLIENT_ID,
   env.DISCORD_CLIENT_SECRET,
-  `${env.NODE_ENV === "production" ? "https" : "http"}://${env.VERCEL_URL}/api/auth/discord/callback`,
+  `${env.NODE_ENV === "production" ? "https://hermes.fractum.nl" : `http://${env.VERCEL_URL}`}/api/auth/discord/callback`,
 );
 
 export const lucia = new Lucia(adapter, {
