@@ -9,10 +9,13 @@ import { openCreateWorkspaceModal } from "~/components/modals/CreateWorkspaceMod
 import { Icon } from "~/components/Icon";
 import type { AuthedProps } from "~/auth";
 import { requireAuthSSP as getServerSideProps } from "~/auth";
+import { useSetUser } from "~/hooks/useSetUser";
 
 export { getServerSideProps };
 
 export const WorkspaceIndex = ({ user }: AuthedProps) => {
+  useSetUser(user);
+
   const { data, isLoading } = api.workspace.getWorkspaces.useQuery();
 
   return (

@@ -5,10 +5,13 @@ import { ProfilePageSkeleton } from "~/components/pages/me/ProfilePageSkeleton";
 import { api } from "~/utils/api";
 import type { AuthedProps } from "~/auth";
 import { requireAuthSSP as getServerSideProps } from "~/auth";
+import { useSetUser } from "~/hooks/useSetUser";
 
 export { getServerSideProps };
 
 export const ProfilePage = ({ user }: AuthedProps) => {
+  useSetUser(user);
+
   const { data: defaultWorkspace, isLoading: isGetDefaultWorkspaceLoading } =
     api.user.getDefaultWorkspace.useQuery();
   const { data: workspaces, isLoading: isGetWorkspacesLoading } =

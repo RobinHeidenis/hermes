@@ -38,10 +38,13 @@ import { Icon } from "~/components/Icon";
 import Link from "next/link";
 import type { AuthedProps } from "~/auth";
 import { requireAuthSSP as getServerSideProps } from "~/auth";
+import { useSetUser } from "~/hooks/useSetUser";
 
 export { getServerSideProps };
 
 export const WorkspaceDetailPage = ({ user }: AuthedProps) => {
+  useSetUser(user);
+
   const { query, asPath } = useRouter();
   const utils = api.useUtils();
 

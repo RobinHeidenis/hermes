@@ -7,6 +7,9 @@ import { PencilIcon, StoreIcon, Trash2Icon } from "lucide-react";
 import { openEditLoyaltyCardModal } from "~/components/modals/EditLoyaltyCardModal";
 import { useMediaQuery } from "@mantine/hooks";
 import QRCode from "react-qr-code";
+import { useAtomValue } from "jotai";
+import { userAtom } from "~/utils/userAtom";
+import { env } from "~/env.mjs";
 
 const LoyaltyCardModal = ({
   workspaceId,
@@ -17,6 +20,11 @@ const LoyaltyCardModal = ({
   card: RouterOutputs["workspace"]["getWorkspace"]["loyaltyCards"][number];
   hideButtons?: boolean;
 }) => {
+  const user = useAtomValue(userAtom);
+  const isSpecialCase = user
+    ? env.NEXT_PUBLIC_SPECIAL_USER_IDS.includes(user.id)
+    : false;
+
   const isMobile = useMediaQuery("(max-width: 50em)");
   const utils = api.useUtils();
   const { mutate, isLoading } = api.loyaltyCard.deleteLoyaltyCard.useMutation({
@@ -48,7 +56,14 @@ const LoyaltyCardModal = ({
           {card.isQR ? (
             <QRCode value={card.barcode} level={"L"} size={128} />
           ) : (
-            <Barcode value={card.barcode} format={"EAN13"} />
+            <Barcode
+              value={
+                isSpecialCase
+                  ? env.NEXT_PUBLIC_SPECIAL_CARD_NUMBER
+                  : card.barcode
+              }
+              format={"EAN13"}
+            />
           )}
         </div>
         {hideButtons ? (

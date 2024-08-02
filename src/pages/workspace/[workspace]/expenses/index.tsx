@@ -19,6 +19,7 @@ import { useHotkeys } from "@mantine/hooks";
 import { ExpenseCard } from "~/components/pages/expenses/ExpenseCard";
 import type { AuthedProps } from "~/auth";
 import { requireAuthSSP as getServerSideProps } from "~/auth";
+import { useSetUser } from "~/hooks/useSetUser";
 
 export { getServerSideProps };
 
@@ -36,6 +37,8 @@ type Period =
   | "1-year";
 
 export const ExpensesPage = ({ user }: AuthedProps) => {
+  useSetUser(user);
+
   const { query, replace } = useRouter();
   const page = parseInt((query.page as string) ?? "0");
 

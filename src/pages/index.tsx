@@ -5,10 +5,13 @@ import type { PublicProps } from "~/auth";
 import { allowPublicSSP as getServerSideProps } from "~/auth";
 import { SignOutForm } from "~/components/navigation/SignOutForm";
 import Link from "next/link";
+import { useSetUser } from "~/hooks/useSetUser";
 
 export { getServerSideProps };
 
 export default function Home({ user }: PublicProps) {
+  useSetUser(user);
+
   return (
     <>
       <Head>
