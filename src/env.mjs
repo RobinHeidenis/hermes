@@ -1,6 +1,6 @@
 // @ts-check
-import {createEnv} from "@t3-oss/env-nextjs";
-import {z} from "zod";
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 export const env = createEnv({
     /**
@@ -29,7 +29,8 @@ export const env = createEnv({
      * `NEXT_PUBLIC_`.
      */
     client: {
-        // NEXT_PUBLIC_VARIABLE: z.string().min(1),
+        NEXT_PUBLIC_SPECIAL_USER_IDS: z.string().optional().transform(string => string?.split(',') ?? []),
+        NEXT_PUBLIC_SPECIAL_CARD_NUMBER: z.string(),
     },
 
     /**
@@ -42,6 +43,9 @@ export const env = createEnv({
         DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
         VERCEL_URL: process.env.VERCEL_URL ?? 'localhost:3000',
         NODE_ENV: process.env.NODE_ENV,
+
+        NEXT_PUBLIC_SPECIAL_USER_IDS: process.env.NEXT_PUBLIC_SPECIAL_USER_IDS,
+        NEXT_PUBLIC_SPECIAL_CARD_NUMBER: process.env.NEXT_PUBLIC_SPECIAL_CARD_NUMBER,
     },
     /**
      * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

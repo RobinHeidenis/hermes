@@ -21,10 +21,13 @@ import { StoreIcon, UserPlusIcon } from "lucide-react";
 import { UserAvatar } from "~/components/pages/workspace/UserAvatar";
 import type { PublicProps } from "~/auth";
 import { allowPublicSSP as getServerSideProps } from "~/auth";
+import { useSetUser } from "~/hooks/useSetUser";
 
 export { getServerSideProps };
 
 const InvitePage = ({ user }: PublicProps) => {
+  useSetUser(user);
+
   const router = useRouter();
   const { invite } = router.query;
   const { data, isLoading, isLoadingError } = api.invite.getInvite.useQuery(

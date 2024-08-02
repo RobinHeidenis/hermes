@@ -9,10 +9,13 @@ import { ListPageContent } from "~/components/pages/list/ListPageContent";
 import { useState } from "react";
 import type { AuthedProps } from "~/auth";
 import { requireAuthSSP as getServerSideProps } from "~/auth";
+import { useSetUser } from "~/hooks/useSetUser";
 
 export { getServerSideProps };
 
 export const ListPage = ({ user }: AuthedProps) => {
+  useSetUser(user);
+
   const { query } = useRouter();
   const [isReordering, setIsReordering] = useState(false);
   const { data: list } = api.list.getList.useQuery(
